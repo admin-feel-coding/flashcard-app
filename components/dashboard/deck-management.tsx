@@ -45,11 +45,11 @@ export function DeckManagement({ decks }: DeckManagementProps) {
   const hasAnyTags = decks.some(deck => deck.tags && deck.tags.length > 0)
 
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Flashcard Decks</h2>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">
+    <div className="mb-6 sm:mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 mb-4 sm:mb-6">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-words">Your Flashcard Decks</h2>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1">
             {selectedTags.length > 0 
               ? `${filteredDecks.length} of ${decks.length} deck${decks.length === 1 ? "" : "s"} matching filters`
               : decks.length 
@@ -58,7 +58,7 @@ export function DeckManagement({ decks }: DeckManagementProps) {
             }
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <AILanguageGenerator />
           <CreateDeckDialog />
         </div>

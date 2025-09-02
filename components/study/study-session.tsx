@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { StudyCard } from "./study-card"
-import { StudyProgress } from "./study-progress"
 import { StudyComplete } from "./study-complete"
 import { createClient } from "@/lib/supabase/client"
 import { calculateSpacedRepetition, getCardsForReview, sortCardsByPriority } from "@/lib/spaced-repetition"
@@ -143,17 +142,13 @@ export function StudySession({ deck, cards, studySessions, userId }: StudySessio
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <StudyProgress
-        deck={deck}
-        currentCard={currentCardIndex + 1}
-        totalCards={finalStudyCards.length}
-        onExit={handleReturnToDeck}
-      />
-
-      <div className="mt-8">
-        <StudyCard card={currentCard} onRate={handleCardRating} />
-      </div>
-    </div>
+    <StudyCard 
+      card={currentCard} 
+      deck={deck}
+      currentCard={currentCardIndex + 1}
+      totalCards={finalStudyCards.length}
+      onRate={handleCardRating}
+      onExit={handleReturnToDeck}
+    />
   )
 }
