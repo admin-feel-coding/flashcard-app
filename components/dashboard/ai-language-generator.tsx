@@ -408,7 +408,7 @@ export function AILanguageGenerator() {
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="w-full h-[100dvh] max-w-none m-0 p-0 border-0 rounded-none bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
+        <DialogContent className="w-full h-screen max-w-none m-0 p-0 border-0 rounded-none bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
 
         {/* Accessibility title - visually hidden */}
         <DialogTitle className="sr-only">AI Language Learning Generator Wizard</DialogTitle>
@@ -426,7 +426,7 @@ export function AILanguageGenerator() {
         </div>
 
         {/* Content - scrollable with space for footer */}
-        <div className="h-full p-4 pt-16 overflow-y-auto pb-[120px] min-h-0">
+        <div className="h-full p-4 pt-16 overflow-y-auto" style={{paddingBottom: '100px'}}>
 
           {/* Step 1: Native Language */}
           {step === 1 && (
@@ -728,8 +728,8 @@ export function AILanguageGenerator() {
 
         </div>
 
-        {/* Footer - Fixed positioning with safe area support */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] bg-white/95 dark:bg-gray-900/95 border-t border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm">
+        {/* Footer - Simple absolute positioning */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 dark:bg-gray-900/95 border-t border-gray-200/50 dark:border-gray-700/50">
           <div className="flex items-center justify-between max-w-sm mx-auto">
             <Button
                 variant="outline"

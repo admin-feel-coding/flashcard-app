@@ -157,18 +157,4 @@
   .animate-pulse-subtle {
     animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
-
-  /* Mobile browser viewport fixes */
-  html {
-    /* Fallback for older browsers */
-    height: 100vh;
-    /* Dynamic viewport height that accounts for mobile browser toolbars */
-    height: 100dvh;
-  }
-  
-  body {
-    /* Ensure body stretches to full height */
-    min-height: 100vh;
-    min-height: 100dvh;
-  }
 }
