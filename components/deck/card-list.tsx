@@ -51,7 +51,10 @@ export function CardList({ cards, deckId }: CardListProps) {
               </div>
               <div>
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Back</h4>
-                <p className="text-gray-900 dark:text-white">{card.back}</p>
+                <div 
+                  className="text-gray-900 dark:text-white text-sm"
+                  dangerouslySetInnerHTML={{ __html: card.back }} 
+                />
               </div>
             </div>
             <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">

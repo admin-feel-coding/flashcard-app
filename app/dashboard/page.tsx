@@ -54,15 +54,16 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .lte("next_review_date", today.toISOString())
 
-  // Calculate recent activity (last 7 days)
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-  const { data: recentSessions } = await supabase
-    .from("study_sessions")
-    .select("*")
+  // Fetch recent activities
+  const { data: recentActivities } = await supabase
+    .from("activities")
+    .select(`
+      *,
+      deck:decks(title, color)
+    `)
     .eq("user_id", user.id)
-    .gte("created_at", sevenDaysAgo.toISOString())
     .order("created_at", { ascending: false })
+    .limit(15)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
@@ -76,7 +77,7 @@ export default async function DashboardPage() {
               totalCards={totalCards || 0}
               studySessions={studySessions || []}
             />
-            <RecentActivity recentSessions={recentSessions || []} />
+            <RecentActivity recentActivities={recentActivities || []} />
           </div>
           <div className="space-y-6">
             <StudyStreak studySessions={studySessions || []} />

@@ -1,0 +1,174 @@
+/* Anki-style flashcard back content styles */
+
+.card-back {
+  font-family: inherit;
+  line-height: 1.6;
+  color: inherit;
+}
+
+.card-back > div {
+  margin-bottom: 16px;
+}
+
+.card-back > div:last-child {
+  margin-bottom: 0;
+}
+
+/* Translation section */
+.card-back .translation {
+  font-size: 18px;
+  color: #1f2937; /* gray-800 */
+  border-left: 3px solid #3b82f6; /* blue-500 */
+  padding-left: 12px;
+  background-color: #f8fafc; /* gray-50 */
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.dark .card-back .translation {
+  color: #f3f4f6; /* gray-100 */
+  background-color: #374151; /* gray-700 */
+  border-left-color: #60a5fa; /* blue-400 */
+}
+
+/* Pronunciation section */
+.card-back .pronunciation {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #6b7280; /* gray-500 */
+  background-color: #f3f4f6; /* gray-100 */
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.dark .card-back .pronunciation {
+  color: #9ca3af; /* gray-400 */
+  background-color: #4b5563; /* gray-600 */
+}
+
+/* Word type section */
+.card-back .word-type {
+  font-size: 12px;
+  color: #6366f1; /* indigo-500 */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dark .card-back .word-type {
+  color: #a5b4fc; /* indigo-300 */
+}
+
+/* Examples section */
+.card-back .examples {
+  background-color: #fefce8; /* yellow-50 */
+  border: 1px solid #fde047; /* yellow-300 */
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.dark .card-back .examples {
+  background-color: #451a03; /* yellow-950 */
+  border-color: #a16207; /* yellow-700 */
+}
+
+.card-back .examples ul {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  list-style-type: none;
+}
+
+.card-back .examples li {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 0;
+}
+
+.card-back .examples li:before {
+  content: "→";
+  color: #f59e0b; /* amber-500 */
+  font-weight: bold;
+  position: absolute;
+  left: -16px;
+}
+
+.card-back .examples li:last-child {
+  margin-bottom: 0;
+}
+
+/* Grammar notes section */
+.card-back .grammar {
+  background-color: #ecfdf5; /* green-50 */
+  border: 1px solid #86efac; /* green-300 */
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.dark .card-back .grammar {
+  background-color: #022c22; /* green-950 */
+  border-color: #166534; /* green-800 */
+}
+
+/* Cultural notes section */
+.card-back .culture {
+  background-color: #fdf4ff; /* fuchsia-50 */
+  border: 1px solid #f0abfc; /* fuchsia-300 */
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.dark .card-back .culture {
+  background-color: #4a044e; /* fuchsia-950 */
+  border-color: #a21caf; /* fuchsia-700 */
+}
+
+/* Usage section */
+.card-back .usage {
+  background-color: #eff6ff; /* blue-50 */
+  border: 1px solid #93c5fd; /* blue-300 */
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+  border-left: 4px solid #3b82f6; /* blue-500 */
+}
+
+.dark .card-back .usage {
+  background-color: #1e3a8a; /* blue-900 */
+  border-color: #3b82f6; /* blue-500 */
+}
+
+/* Strong elements */
+.card-back strong {
+  font-weight: 600;
+  color: #1f2937; /* gray-800 */
+}
+
+.dark .card-back strong {
+  color: #f9fafb; /* gray-50 */
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .card-back {
+    font-size: 14px;
+  }
+  
+  .card-back .translation {
+    font-size: 16px;
+  }
+  
+  .card-back > div {
+    margin-bottom: 12px;
+  }
+  
+  .card-back .translation,
+  .card-back .examples,
+  .card-back .grammar,
+  .card-back .culture,
+  .card-back .usage {
+    padding: 10px;
+  }
+}

@@ -19,12 +19,7 @@ export interface LanguageDeckRequest {
 
 export interface LanguageCard {
   front: string
-  back: string
-  pronunciation?: string
-  example?: string
-  grammarNote?: string
-  culturalNote?: string
-  difficulty?: string
+  back: string // Now contains structured HTML content
 }
 
 export interface LanguageDeck {
@@ -134,56 +129,73 @@ Generate exactly ${cardCount} flashcards for learning ${targetLanguage} at ${pro
       topicsText = 'Cover general, practical vocabulary and expressions suitable for daily life.'
     }
 
-    const userPrompt = `Create language learning flashcards with these specifications:
+    const userPrompt = `Create language learning flashcards with ANKI-STYLE structured backs. Each card back should be well-organized with clear sections.
 
-Target Language: ${targetLanguage}
-Native Language: ${nativeLanguage}
-Proficiency Level: ${proficiencyLevel}
-Learning Focus: ${learningFocus}
-Number of Cards: ${cardCount}
+TARGET LANGUAGE: ${targetLanguage}
+NATIVE LANGUAGE: ${nativeLanguage}
+PROFICIENCY LEVEL: ${proficiencyLevel} 
+LEARNING FOCUS: ${learningFocus}
+NUMBER OF CARDS: ${cardCount}
 ${topicsText}
 
-${includeGrammarNotes ? 'Include grammar explanations where helpful.' : ''}
-${includeCulture ? 'Include cultural context and usage notes.' : ''}
+CARD STRUCTURE REQUIREMENTS:
+- Front: Simple, clear target language content
+- Back: Structured with multiple sections using HTML formatting
 
-Return a JSON object with:
+Return JSON with:
 {
   "title": "Engaging deck title in ${nativeLanguage} (max 60 chars)",
-  "description": "Brief description of what students will learn (max 150 chars)",
+  "description": "Brief description of what students will learn (max 150 chars)", 
   "cards": [
     {
-      "front": "Content in ${targetLanguage} (word, phrase, sentence, or question)",
-      "back": "${nativeLanguage} translation and explanation",
-      "pronunciation": "Pronunciation guide (optional)",
-      "example": "Example sentence in ${targetLanguage} with ${nativeLanguage} translation (optional)",
-      "grammarNote": "Grammar explanation if relevant (optional)",
-      "culturalNote": "Cultural context or usage note (optional)",
-      "difficulty": "relative difficulty within ${proficiencyLevel} level"
+      "front": "Target language content (word/phrase/sentence)",
+      "back": "HTML-formatted structured answer with sections"
     }
   ],
-  "tags": ["${targetLanguage.toLowerCase()}", "${proficiencyLevel.toLowerCase()}", "${learningFocus}", "practical", "relevant"],
-  "suggestedColor": "one of: blue, emerald, amber, red, violet, cyan, orange, lime"
+  "tags": ["${targetLanguage.toLowerCase()}", "${proficiencyLevel.toLowerCase()}", "${learningFocus}"],
+  "suggestedColor": "blue, emerald, amber, red, violet, cyan, orange, or lime"
 }
 
-EXAMPLES FOR ${proficiencyLevel} LEVEL:
+BACK STRUCTURE TEMPLATE (use HTML):
+<div class="card-back">
+  <div class="translation"><strong>Translation:</strong> [Main translation]</div>
+  <div class="pronunciation"><strong>Pronunciation:</strong> [IPA or phonetic guide]</div>
+  <div class="word-type"><strong>Type:</strong> [noun/verb/adjective/etc.]</div>
+  <div class="examples">
+    <strong>Examples:</strong>
+    <ul>
+      <li>[Example 1 in target language] → [Translation]</li>
+      <li>[Example 2 in target language] → [Translation]</li>
+    </ul>
+  </div>
+  ${includeGrammarNotes ? '<div class="grammar"><strong>Grammar Notes:</strong> [Grammar explanation]</div>' : ''}
+  ${includeCulture ? '<div class="culture"><strong>Cultural Note:</strong> [Cultural context]</div>' : ''}
+  <div class="usage"><strong>Usage:</strong> [When/how to use this]</div>
+</div>
+
+EXAMPLE CARDS:
 
 VOCABULARY CARD:
-Front: "el gato"
-Back: "the cat"
-Pronunciation: "el GAH-toh"
-Example: "El gato está durmiendo. - The cat is sleeping."
+Front: "el médico"
+Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> the doctor</div><div class='pronunciation'><strong>Pronunciation:</strong> /el ˈme.ði.ko/</div><div class='word-type'><strong>Type:</strong> masculine noun</div><div class='examples'><strong>Examples:</strong><ul><li>El médico está en el hospital → The doctor is at the hospital</li><li>Necesito ver al médico → I need to see the doctor</li></ul></div><div class='usage'><strong>Usage:</strong> General term for doctor, used in formal and informal contexts</div></div>"
 
 GRAMMAR CARD:
-Front: "¿Cómo se forma el presente continuo?"
-Back: "Present continuous: estar + gerund (-ando/-iendo)"
-Example: "Estoy estudiando español. - I am studying Spanish."
+Front: "How do you form the past tense with 'haber'?"
+Back: "<div class='card-back'><div class='translation'><strong>Answer:</strong> Present perfect = haber (present) + past participle</div><div class='examples'><strong>Examples:</strong><ul><li>He comido → I have eaten</li><li>Has vivido → You have lived</li><li>Han estudiado → They have studied</li></ul></div><div class='grammar'><strong>Formation:</strong> he/has/ha/hemos/habéis/han + -ado/-ido endings</div><div class='usage'><strong>Usage:</strong> Actions completed in the recent past or with current relevance</div></div>"
 
 PHRASE CARD:
-Front: "¡Qué tengas un buen día!"
-Back: "Have a good day!"
-CulturalNote: "Common farewell, more formal than 'hasta luego'"
+Front: "¿Cómo estás?"
+Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> How are you?</div><div class='pronunciation'><strong>Pronunciation:</strong> /ˈko.mo es.ˈtas/</div><div class='examples'><strong>Common Responses:</strong><ul><li>Muy bien, gracias → Very well, thanks</li><li>Bien, ¿y tú? → Good, and you?</li></ul></div><div class='usage'><strong>Usage:</strong> Informal greeting, use with friends, family, peers</div><div class='culture'><strong>Cultural Note:</strong> More personal than '¿Qué tal?' - shows genuine interest</div></div>"
 
-Make cards practical and immediately useful for real communication!`
+Create authentic, practical content that helps students communicate naturally. Each card should teach something immediately useful for real-world ${targetLanguage} communication.
+
+IMPORTANT: 
+- Use proper HTML structure in the "back" field
+- Make content rich but well-organized  
+- Include practical examples students can use immediately
+- Adjust complexity to ${proficiencyLevel} level
+
+Generate exactly ${cardCount} flashcards for learning ${targetLanguage} at ${proficiencyLevel} level.`
 
     try {
       const completion = await openai.chat.completions.create({

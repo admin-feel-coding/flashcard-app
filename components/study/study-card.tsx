@@ -117,7 +117,10 @@ export function StudyCard({ card, onRate }: StudyCardProps) {
                       />
                     </svg>
                   </div>
-                  <p className="text-xl text-gray-900 dark:text-white leading-relaxed text-balance">{card.back}</p>
+                  <div 
+                    className="text-left max-w-lg mx-auto"
+                    dangerouslySetInnerHTML={{ __html: card.back }} 
+                  />
                 </div>
               )}
             </div>

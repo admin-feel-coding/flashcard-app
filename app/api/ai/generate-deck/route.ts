@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { AILanguageLearningService, LanguageDeckRequest } from '@/lib/ai-service'
+import { ActivityService } from '@/lib/activity-service'
 
 export async function POST(request: NextRequest) {
   try {
@@ -87,6 +88,15 @@ export async function POST(request: NextRequest) {
       await supabase.from('decks').delete().eq('id', deck.id)
       return NextResponse.json({ error: 'Failed to save cards' }, { status: 500 })
     }
+
+    // Create activity for deck creation
+    await ActivityService.createDeckCreatedActivity(
+      user.id,
+      deck.id,
+      deck.title,
+      generatedDeck.cards.length,
+      true // AI generated
+    )
 
     return NextResponse.json({
       success: true,
