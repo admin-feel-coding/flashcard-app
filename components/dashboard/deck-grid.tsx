@@ -19,9 +19,17 @@ interface Deck {
 
 interface DeckGridProps {
   decks: Deck[]
+  isSelectionMode?: boolean
+  selectedDeckIds?: Set<string>
+  onSelectionChange?: (deckId: string, selected: boolean) => void
 }
 
-export function DeckGrid({ decks }: DeckGridProps) {
+export function DeckGrid({ 
+  decks, 
+  isSelectionMode = false, 
+  selectedDeckIds = new Set(), 
+  onSelectionChange 
+}: DeckGridProps) {
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null)
   const [deletingDeck, setDeletingDeck] = useState<Deck | null>(null)
   
@@ -38,6 +46,9 @@ export function DeckGrid({ decks }: DeckGridProps) {
             deck={deck}
             onEdit={setEditingDeck}
             onDelete={setDeletingDeck}
+            isSelectionMode={isSelectionMode}
+            isSelected={selectedDeckIds.has(deck.id)}
+            onSelectionChange={onSelectionChange}
           />
         ))}
       </div>
