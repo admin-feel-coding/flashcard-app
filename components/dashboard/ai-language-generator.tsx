@@ -27,14 +27,15 @@ import {
 
 const ALL_LANGUAGES = [
   // Popular first 6
+  { code: 'en', name: 'English', flag: '🇺🇸', popular: true },
   { code: 'es', name: 'Spanish', flag: '🇪🇸', popular: true },
   { code: 'fr', name: 'French', flag: '🇫🇷', popular: true },
   { code: 'de', name: 'German', flag: '🇩🇪', popular: true },
   { code: 'it', name: 'Italian', flag: '🇮🇹', popular: true },
   { code: 'pt', name: 'Portuguese', flag: '🇵🇹', popular: true },
-  { code: 'ja', name: 'Japanese', flag: '🇯🇵', popular: true },
 
   // Other languages
+  { code: 'ja', name: 'Japanese', flag: '🇯🇵', popular: false },
   { code: 'ko', name: 'Korean', flag: '🇰🇷', popular: false },
   { code: 'zh', name: 'Chinese', flag: '🇨🇳', popular: false },
   { code: 'ru', name: 'Russian', flag: '🇷🇺', popular: false },
@@ -174,21 +175,69 @@ export function AILanguageGenerator() {
   // Filter languages based on search
   const filteredTargetLanguages = useMemo(() => {
     if (!targetLanguageSearch.trim()) {
-      return ALL_LANGUAGES.filter(lang => lang.popular)
+      // Show popular languages + selected language if it's not popular
+      const popularLanguages = ALL_LANGUAGES.filter(lang => lang.popular)
+      const selectedLang = ALL_LANGUAGES.find(lang => lang.name === targetLanguage)
+
+      if (selectedLang && !selectedLang.popular) {
+        // Remove duplicates by name
+        const uniqueLanguages = new Map()
+        popularLanguages.forEach(lang => uniqueLanguages.set(lang.name, lang))
+        uniqueLanguages.set(selectedLang.name, selectedLang)
+        return Array.from(uniqueLanguages.values())
+      }
+      return popularLanguages
     }
-    return ALL_LANGUAGES.filter(lang =>
+
+    // For search results, remove duplicates by name and prefer popular version
+    const searchResults = ALL_LANGUAGES.filter(lang =>
       lang.name.toLowerCase().includes(targetLanguageSearch.toLowerCase())
     )
-  }, [targetLanguageSearch])
+
+    const uniqueResults = new Map()
+    searchResults.forEach(lang => {
+      const existing = uniqueResults.get(lang.name)
+      // Keep the popular version if it exists, otherwise keep the first one
+      if (!existing || (!existing.popular && lang.popular)) {
+        uniqueResults.set(lang.name, lang)
+      }
+    })
+
+    return Array.from(uniqueResults.values())
+  }, [targetLanguageSearch, targetLanguage])
 
   const filteredNativeLanguages = useMemo(() => {
     if (!nativeLanguageSearch.trim()) {
-      return NATIVE_LANGUAGES.filter(lang => lang.popular)
+      // Show popular languages + selected language if it's not popular
+      const popularLanguages = NATIVE_LANGUAGES.filter(lang => lang.popular)
+      const selectedLang = NATIVE_LANGUAGES.find(lang => lang.name === nativeLanguage)
+
+      if (selectedLang && !selectedLang.popular) {
+        // Remove duplicates by name
+        const uniqueLanguages = new Map()
+        popularLanguages.forEach(lang => uniqueLanguages.set(lang.name, lang))
+        uniqueLanguages.set(selectedLang.name, selectedLang)
+        return Array.from(uniqueLanguages.values())
+      }
+      return popularLanguages
     }
-    return NATIVE_LANGUAGES.filter(lang =>
+
+    // For search results, remove duplicates by name and prefer popular version
+    const searchResults = NATIVE_LANGUAGES.filter(lang =>
       lang.name.toLowerCase().includes(nativeLanguageSearch.toLowerCase())
     )
-  }, [nativeLanguageSearch])
+
+    const uniqueResults = new Map()
+    searchResults.forEach(lang => {
+      const existing = uniqueResults.get(lang.name)
+      // Keep the popular version if it exists, otherwise keep the first one
+      if (!existing || (!existing.popular && lang.popular)) {
+        uniqueResults.set(lang.name, lang)
+      }
+    })
+
+    return Array.from(uniqueResults.values())
+  }, [nativeLanguageSearch, nativeLanguage])
 
   const resetForm = () => {
     setStep(1)
@@ -359,7 +408,7 @@ export function AILanguageGenerator() {
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="!fixed !inset-0 !w-screen h-[100dvh] !max-w-none !m-0 !p-0 !border-0 !rounded-none !top-0 !left-0 !transform-none !translate-x-0 !translate-y-0 flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
+        <DialogContent className="w-full h-screen max-w-none m-0 p-0 border-0 rounded-none bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
 
         {/* Accessibility title - visually hidden */}
         <DialogTitle className="sr-only">AI Language Learning Generator Wizard</DialogTitle>
@@ -376,8 +425,8 @@ export function AILanguageGenerator() {
           </Button>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto min-h-0 pt-16 sm:pt-4">
+        {/* Content - scrollable with space for footer */}
+        <div className="h-full p-4 pt-16 overflow-y-auto" style={{paddingBottom: '100px'}}>
 
           {/* Step 1: Native Language */}
           {step === 1 && (
@@ -390,6 +439,19 @@ export function AILanguageGenerator() {
                 <p className="text-sm text-gray-600 dark:text-gray-300 px-4">
                   This helps us provide better explanations and translations
                 </p>
+              </div>
+
+              {/* Search Input */}
+              <div className="max-w-xs mx-auto px-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search languages..."
+                    value={nativeLanguageSearch}
+                    onChange={(e) => setNativeLanguageSearch(e.target.value)}
+                    className="pl-10 h-10 rounded-lg border-2 border-gray-200 focus:border-purple-500 text-sm"
+                  />
+                </div>
               </div>
 
               {/* Popular Languages */}
@@ -410,36 +472,6 @@ export function AILanguageGenerator() {
                 ))}
               </div>
 
-              {/* Search Input */}
-              <div className="max-w-xs mx-auto px-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search languages..."
-                    value={nativeLanguageSearch}
-                    onChange={(e) => setNativeLanguageSearch(e.target.value)}
-                    className="pl-10 h-10 rounded-lg border-2 border-gray-200 focus:border-purple-500 text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* Custom selection results */}
-              {nativeLanguageSearch && filteredNativeLanguages.length > 0 && (
-                <div className="max-w-sm mx-auto">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl border shadow-lg max-h-48 overflow-y-auto">
-                    {filteredNativeLanguages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => selectLanguage(lang.name, false)}
-                        className="w-full p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 first:rounded-t-xl last:rounded-b-xl"
-                      >
-                        <span className="text-xl">{lang.flag}</span>
-                        <span className="font-medium">{lang.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
@@ -454,6 +486,19 @@ export function AILanguageGenerator() {
                 <p className="text-sm text-gray-600 dark:text-gray-300 px-4">
                   Choose your target language or search for more options
                 </p>
+              </div>
+
+              {/* Search Input */}
+              <div className="max-w-xs mx-auto px-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search languages..."
+                    value={targetLanguageSearch}
+                    onChange={(e) => setTargetLanguageSearch(e.target.value)}
+                    className="pl-10 h-10 rounded-lg border-2 border-gray-200 focus:border-purple-500 text-sm"
+                  />
+                </div>
               </div>
 
               {/* Popular Languages */}
@@ -474,19 +519,6 @@ export function AILanguageGenerator() {
                 ))}
               </div>
 
-              {/* Search Input */}
-              <div className="max-w-xs mx-auto px-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search languages..."
-                    value={targetLanguageSearch}
-                    onChange={(e) => setTargetLanguageSearch(e.target.value)}
-                    className="pl-10 h-10 rounded-lg border-2 border-gray-200 focus:border-purple-500 text-sm"
-                  />
-                </div>
-              </div>
-
               {/* Custom selection results */}
               {targetLanguageSearch && filteredTargetLanguages.length > 0 && (
                 <div className="max-w-sm mx-auto">
@@ -495,10 +527,17 @@ export function AILanguageGenerator() {
                       <button
                         key={lang.code}
                         onClick={() => selectLanguage(lang.name, true)}
-                        className="w-full p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 first:rounded-t-xl last:rounded-b-xl"
+                        className={`w-full p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 first:rounded-t-xl last:rounded-b-xl transition-colors ${
+                          targetLanguage === lang.name
+                            ? 'bg-purple-100 dark:bg-purple-900/30 border-l-4 border-l-purple-500'
+                            : ''
+                        }`}
                       >
                         <span className="text-xl">{lang.flag}</span>
                         <span className="font-medium">{lang.name}</span>
+                        {targetLanguage === lang.name && (
+                          <CheckCircle className="w-4 h-4 text-purple-600 ml-auto" />
+                        )}
                       </button>
                     ))}
                   </div>
@@ -687,45 +726,45 @@ export function AILanguageGenerator() {
             </div>
           )}
 
-          {/* Footer Navigation */}
-          <div className="p-4 border-t mt-10 border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
-            <div className="flex items-center justify-between max-w-xs sm:max-w-sm mx-auto">
-              <Button
-                  variant="outline"
-                  onClick={prevStep}
-                  disabled={step === 1}
-                  className="flex items-center gap-2 h-10 px-4 rounded-xl bg-white/80 hover:bg-white text-sm"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                Back
-              </Button>
+        </div>
 
-              {/* Progress indicators */}
-              <div className="flex items-center gap-2">
-                <Progress value={(step / 4) * 100} className="w-16 h-2" />
-                <span className="text-xs text-gray-500 font-medium">{step}/4</span>
-              </div>
+        {/* Footer - Simple absolute positioning */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 dark:bg-gray-900/95 border-t border-gray-200/50 dark:border-gray-700/50">
+          <div className="flex items-center justify-between max-w-sm mx-auto">
+            <Button
+                variant="outline"
+                onClick={prevStep}
+                disabled={step === 1}
+                className="flex items-center gap-2 h-12 px-4"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </Button>
 
-              {step < 4 ? (
-                  <Button
-                      onClick={nextStep}
-                      disabled={!canProceedFromStep(step)}
-                      className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-10 px-4 rounded-xl text-sm"
-                  >
-                    Next
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-              ) : (
-                  <Button
-                      onClick={handleGenerate}
-                      disabled={!canProceedFromStep(step)}
-                      className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-10 px-4 rounded-xl text-sm"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    Create
-                  </Button>
-              )}
+            <div className="flex items-center gap-2">
+              <Progress value={(step / 4) * 100} className="w-16 h-2" />
+              <span className="text-xs text-gray-500 font-medium">{step}/4</span>
             </div>
+
+            {step < 4 ? (
+                <Button
+                    onClick={nextStep}
+                    disabled={!canProceedFromStep(step)}
+                    className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-12 px-4"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+            ) : (
+                <Button
+                    onClick={handleGenerate}
+                    disabled={!canProceedFromStep(step)}
+                    className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-12 px-4"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Create
+                </Button>
+            )}
           </div>
         </div>
 
