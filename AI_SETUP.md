@@ -8,10 +8,10 @@ This flashcard app is specifically designed for **language learning** with AI-po
 
 Add this to your `.env.local` file:
 
-```bash
+\`\`\`bash
 # OpenAI API Key (required for AI deck generation)
 OPENAI_API_KEY=your_openai_api_key_here
-```
+\`\`\`
 
 ### Getting Your OpenAI API Key:
 1. Go to [OpenAI Platform](https://platform.openai.com/)
