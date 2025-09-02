@@ -85,21 +85,6 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center px-4 py-8 sm:p-6 lg:p-8">
       <div className="w-full max-w-sm sm:max-w-md">
-        {/* Logo and Branding */}
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 shadow-lg">
-            <svg className="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">FlashMind</h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Welcome back to your learning journey</p>
-        </div>
 
         {/* Main Card */}
         <Card className="border-0 shadow-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl overflow-hidden">
@@ -186,7 +171,7 @@ export default function Page() {
                     Magic Link Sent! ✨
                   </h3>
                   <p className="text-xs sm:text-sm text-green-700 dark:text-green-300">
-                    Click the link in your email to access your FlashMind dashboard. The link will expire in 1 hour.
+                    Click the link in your email to access your dashboard. The link will expire in 1 hour.
                   </p>
                 </div>
                 

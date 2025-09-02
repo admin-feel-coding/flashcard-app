@@ -381,24 +381,24 @@ export function AILanguageGenerator() {
 
           {/* Step 1: Native Language */}
           {step === 1 && (
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-3">
               <div>
-                <MessageCircle className="w-12 h-12 mx-auto mb-4 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <MessageCircle className="w-10 h-10 mx-auto mb-3 text-purple-600" />
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">
                   What's your native language?
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-300 px-4">
                   This helps us provide better explanations and translations
                 </p>
               </div>
 
               {/* Popular Languages */}
-              <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+              <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
                 {filteredNativeLanguages.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => selectLanguage(lang.name, false)}
-                    className={`p-3 rounded-xl border-2 transition-all duration-200 text-center hover:scale-105 ${
+                    className={`p-2.5 rounded-lg border-2 transition-all duration-200 text-center ${
                       nativeLanguage === lang.name
                         ? 'border-purple-500 bg-purple-100 dark:bg-purple-900/30 shadow-lg'
                         : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md'
@@ -411,14 +411,14 @@ export function AILanguageGenerator() {
               </div>
 
               {/* Search Input */}
-              <div className="max-w-sm mx-auto">
+              <div className="max-w-xs mx-auto px-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Search for other languages..."
+                    placeholder="Search languages..."
                     value={nativeLanguageSearch}
                     onChange={(e) => setNativeLanguageSearch(e.target.value)}
-                    className="pl-10 h-12 rounded-xl border-2 border-gray-200 focus:border-purple-500"
+                    className="pl-10 h-10 rounded-lg border-2 border-gray-200 focus:border-purple-500 text-sm"
                   />
                 </div>
               </div>
@@ -445,24 +445,24 @@ export function AILanguageGenerator() {
 
           {/* Step 2: Target Language */}
           {step === 2 && (
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-3">
               <div>
-                <Globe className="w-12 h-12 mx-auto mb-4 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <Globe className="w-10 h-10 mx-auto mb-3 text-purple-600" />
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">
                   What language do you want to learn?
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-300 px-4">
                   Choose your target language or search for more options
                 </p>
               </div>
 
               {/* Popular Languages */}
-              <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+              <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
                 {filteredTargetLanguages.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => selectLanguage(lang.name, true)}
-                    className={`p-3 rounded-xl border-2 transition-all duration-200 text-center hover:scale-105 ${
+                    className={`p-2.5 rounded-lg border-2 transition-all duration-200 text-center ${
                       targetLanguage === lang.name
                         ? 'border-purple-500 bg-purple-100 dark:bg-purple-900/30 shadow-lg'
                         : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md'
@@ -475,14 +475,14 @@ export function AILanguageGenerator() {
               </div>
 
               {/* Search Input */}
-              <div className="max-w-sm mx-auto">
+              <div className="max-w-xs mx-auto px-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Search for other languages..."
+                    placeholder="Search languages..."
                     value={targetLanguageSearch}
                     onChange={(e) => setTargetLanguageSearch(e.target.value)}
-                    className="pl-10 h-10 rounded-xl border-2 border-gray-200 focus:border-purple-500"
+                    className="pl-10 h-10 rounded-lg border-2 border-gray-200 focus:border-purple-500 text-sm"
                   />
                 </div>
               </div>
@@ -509,23 +509,23 @@ export function AILanguageGenerator() {
 
           {/* Step 3: Proficiency Level */}
           {step === 3 && (
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-3">
               <div>
-                <BookOpen className="w-12 h-12 mx-auto mb-4 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <BookOpen className="w-10 h-10 mx-auto mb-3 text-purple-600" />
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">
                   What's your current level?
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-300 px-4">
                   Be honest - this helps us create better content
                 </p>
               </div>
 
-              <div className="space-y-2 max-w-md mx-auto">
+              <div className="space-y-2 max-w-sm mx-auto px-4">
                 {PROFICIENCY_LEVELS.map((level) => (
                   <button
                     key={level.value}
                     onClick={() => setProficiencyLevel(level.value)}
-                    className={`w-full p-3 rounded-xl border-2 transition-all duration-200 text-left hover:scale-[1.02] ${
+                    className={`w-full p-2.5 rounded-lg border-2 transition-all duration-200 text-left ${
                       proficiencyLevel === level.value
                         ? 'border-purple-500 bg-purple-100 dark:bg-purple-900/30 shadow-lg'
                         : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md'
@@ -546,20 +546,20 @@ export function AILanguageGenerator() {
 
           {/* Step 4: Learning Focus */}
           {step === 4 && (
-            <div className="max-w-4xl mx-auto space-y-8">
-              <div className="text-center space-y-4">
-                <div className="flex items-center justify-center gap-4">
-                  <span className="text-4xl">{getLanguageFlag(nativeLanguage)}</span>
-                  <ChevronRight className="w-6 h-6 text-gray-400" />
-                  <span className="text-4xl">{getLanguageFlag(targetLanguage)}</span>
+            <div className="max-w-lg mx-auto space-y-4 px-4">
+              <div className="text-center space-y-3">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-3xl">{getLanguageFlag(nativeLanguage)}</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <span className="text-3xl">{getLanguageFlag(targetLanguage)}</span>
                 </div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
                   What's your {targetLanguage} goal?
                 </h1>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-3">
                   <button
                     onClick={() => {
                       setDeckDescription(`Essential ${targetLanguage} for travelers! Master hotel bookings, restaurant orders, directions, emergency phrases, cultural etiquette, and tourist interactions.`)
@@ -567,7 +567,7 @@ export function AILanguageGenerator() {
                       setSelectedCategory("travel")
                       setCustomFocus("")
                     }}
-                    className={`p-4 rounded-lg border text-left transition-colors ${
+                    className={`p-3 rounded-lg border text-left transition-colors ${
                       selectedCategory === "travel"
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800'
@@ -649,12 +649,12 @@ export function AILanguageGenerator() {
                   </button>
                 </div>
 
-                <div className="space-y-4">
-                  <h3 className="text-center font-medium text-gray-900 dark:text-white">
+                <div className="space-y-3">
+                  <h3 className="text-center font-medium text-gray-900 dark:text-white text-sm">
                     ✨ Or describe your specific needs
                   </h3>
                   <Textarea
-                    placeholder={`Example: "I'm a chef and want to learn culinary terms in ${targetLanguage}"`}
+                    placeholder={`Example: "I'm a chef and want to learn culinary terms"`}
                     value={customFocus}
                     onChange={(e) => {
                       setCustomFocus(e.target.value)
@@ -668,7 +668,7 @@ export function AILanguageGenerator() {
                         setSelectedCategory("")
                       }
                     }}
-                    className="w-full h-20 p-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-blue-500 resize-none bg-white dark:bg-gray-800"
+                    className="w-full h-16 p-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-blue-500 resize-none bg-white dark:bg-gray-800 text-sm"
                   />
                 </div>
 
@@ -690,47 +690,45 @@ export function AILanguageGenerator() {
         </div>
 
         {/* Footer Navigation */}
-        {(
-          <div className="p-3 sm:p-4 border-t border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
-            <div className="flex items-center justify-between max-w-xs sm:max-w-sm mx-auto">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={step === 1}
-                className="flex items-center gap-2 h-8 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl bg-white/80 hover:bg-white text-xs sm:text-sm"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                Back
-              </Button>
+        <div className="p-4 border-t border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
+          <div className="flex items-center justify-between max-w-xs sm:max-w-sm mx-auto">
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              disabled={step === 1}
+              className="flex items-center gap-2 h-10 px-4 rounded-xl bg-white/80 hover:bg-white text-sm"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </Button>
 
-              {/* Progress indicators */}
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <Progress value={(step / 4) * 100} className="w-12 sm:w-16 h-1" />
-                <span className="text-xs text-gray-500 font-medium">{step}/4</span>
-              </div>
-
-              {step < 4 ? (
-                <Button
-                  onClick={nextStep}
-                  disabled={!canProceedFromStep(step)}
-                  className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-8 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm"
-                >
-                  Next
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleGenerate}
-                  disabled={!canProceedFromStep(step)}
-                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-8 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Create
-                </Button>
-              )}
+            {/* Progress indicators */}
+            <div className="flex items-center gap-2">
+              <Progress value={(step / 4) * 100} className="w-16 h-2" />
+              <span className="text-xs text-gray-500 font-medium">{step}/4</span>
             </div>
+
+            {step < 4 ? (
+              <Button
+                onClick={nextStep}
+                disabled={!canProceedFromStep(step)}
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-10 px-4 rounded-xl text-sm"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleGenerate}
+                disabled={!canProceedFromStep(step)}
+                className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-10 px-4 rounded-xl text-sm"
+              >
+                <Sparkles className="w-4 h-4" />
+                Create
+              </Button>
+            )}
           </div>
-        )}
+        </div>
       </DialogContent>
       </Dialog>
     </>
