@@ -35,7 +35,7 @@ export const loginWithRememberMe = async ({ email, password, rememberMe }: Login
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback?next=/dashboard`,
       },
     })
 
