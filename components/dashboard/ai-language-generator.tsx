@@ -158,14 +158,14 @@ export function AILanguageGenerator() {
     if (saved) {
       setNativeLanguage(saved)
     }
-    
+
     // Listen for language changes from settings
     const handleLanguageChange = (event: CustomEvent) => {
       setNativeLanguage(event.detail.language)
     }
-    
+
     window.addEventListener('nativeLanguageChange', handleLanguageChange as EventListener)
-    
+
     return () => {
       window.removeEventListener('nativeLanguageChange', handleLanguageChange as EventListener)
     }
@@ -245,7 +245,7 @@ export function AILanguageGenerator() {
     // Get language flags for better visual feedback
     const nativeFlag = getLanguageFlag(nativeLanguage)
     const targetFlag = getLanguageFlag(targetLanguage)
-    
+
     // Get focus description with icons for better info
     const getFocusDescription = () => {
       if (selectedCategory === "travel") return "✈️ Travel & Adventure phrases"
@@ -255,18 +255,18 @@ export function AILanguageGenerator() {
       if (customFocus) return `🎯 ${customFocus}`
       return "📚 General vocabulary"
     }
-    
+
     const focusDescription = getFocusDescription()
-    
+
     // Show enhanced initial toast with flags and details
     const toastId = toast.loading(
       `${nativeFlag} → ${targetFlag} Creating ${targetLanguage} deck...`,
-      { 
+      {
         description: `${proficiencyLevel} level • ${focusDescription} • 15 cards`,
         duration: Infinity // Keep loading toast until we update it
       }
     )
-    
+
     // Close dialog immediately to allow user to continue using the app
     setTimeout(() => {
       setOpen(false)
@@ -284,10 +284,10 @@ export function AILanguageGenerator() {
           nativeLanguage,
           proficiencyLevel,
           cardCount: 15, // Default card count
-          learningFocus: selectedCategory === "travel" ? "phrases" : 
-                        selectedCategory === "business" ? "vocabulary" : 
-                        selectedCategory === "social" ? "conversation" : 
-                        selectedCategory === "academic" ? "mixed" : 
+          learningFocus: selectedCategory === "travel" ? "phrases" :
+                        selectedCategory === "business" ? "vocabulary" :
+                        selectedCategory === "social" ? "conversation" :
+                        selectedCategory === "academic" ? "mixed" :
                         customFocus ? "mixed" : "vocabulary", // Default to vocabulary
           customFocus: customFocus || "",
           deckTitle: deckTitle || `${targetLanguage} Learning Deck`,
@@ -304,7 +304,7 @@ export function AILanguageGenerator() {
       // Enhanced success toast with flags and deck info
       toast.success(
         `${targetFlag} Deck created successfully!`,
-        { 
+        {
           id: toastId,
           description: `"${data.deck.title}" • ${proficiencyLevel} level • ${data.deck.cardCount || 15} cards ready to study`,
           action: {
@@ -314,7 +314,7 @@ export function AILanguageGenerator() {
           duration: 6000 // Show success longer so users can see the action button
         }
       )
-      
+
       // Refresh the dashboard to show the new deck
       router.refresh()
 
@@ -323,7 +323,7 @@ export function AILanguageGenerator() {
       // Enhanced error toast
       toast.error(
         `${targetFlag} Failed to create ${targetLanguage} deck`,
-        { 
+        {
           id: toastId,
           description: error instanceof Error ? error.message : "Please try again with different settings",
           duration: 5000
@@ -359,7 +359,7 @@ export function AILanguageGenerator() {
           </Button>
         </DialogTrigger>
 
-      <DialogContent className="!fixed !inset-0 !w-screen !h-screen !max-w-none !m-0 !p-0 !border-0 !rounded-none !top-0 !left-0 !transform-none !translate-x-0 !translate-y-0 flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
+        <DialogContent className="!fixed !inset-0 !w-screen h-[100dvh] !max-w-none !m-0 !p-0 !border-0 !rounded-none !top-0 !left-0 !transform-none !translate-x-0 !translate-y-0 flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
 
         {/* Accessibility title - visually hidden */}
         <DialogTitle className="sr-only">AI Language Learning Generator Wizard</DialogTitle>
@@ -687,48 +687,48 @@ export function AILanguageGenerator() {
             </div>
           )}
 
-        </div>
+          {/* Footer Navigation */}
+          <div className="p-4 border-t mt-10 border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
+            <div className="flex items-center justify-between max-w-xs sm:max-w-sm mx-auto">
+              <Button
+                  variant="outline"
+                  onClick={prevStep}
+                  disabled={step === 1}
+                  className="flex items-center gap-2 h-10 px-4 rounded-xl bg-white/80 hover:bg-white text-sm"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back
+              </Button>
 
-        {/* Footer Navigation */}
-        <div className="p-4 border-t border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
-          <div className="flex items-center justify-between max-w-xs sm:max-w-sm mx-auto">
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              disabled={step === 1}
-              className="flex items-center gap-2 h-10 px-4 rounded-xl bg-white/80 hover:bg-white text-sm"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </Button>
+              {/* Progress indicators */}
+              <div className="flex items-center gap-2">
+                <Progress value={(step / 4) * 100} className="w-16 h-2" />
+                <span className="text-xs text-gray-500 font-medium">{step}/4</span>
+              </div>
 
-            {/* Progress indicators */}
-            <div className="flex items-center gap-2">
-              <Progress value={(step / 4) * 100} className="w-16 h-2" />
-              <span className="text-xs text-gray-500 font-medium">{step}/4</span>
+              {step < 4 ? (
+                  <Button
+                      onClick={nextStep}
+                      disabled={!canProceedFromStep(step)}
+                      className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-10 px-4 rounded-xl text-sm"
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+              ) : (
+                  <Button
+                      onClick={handleGenerate}
+                      disabled={!canProceedFromStep(step)}
+                      className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-10 px-4 rounded-xl text-sm"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Create
+                  </Button>
+              )}
             </div>
-
-            {step < 4 ? (
-              <Button
-                onClick={nextStep}
-                disabled={!canProceedFromStep(step)}
-                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-10 px-4 rounded-xl text-sm"
-              >
-                Next
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleGenerate}
-                disabled={!canProceedFromStep(step)}
-                className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-10 px-4 rounded-xl text-sm"
-              >
-                <Sparkles className="w-4 h-4" />
-                Create
-              </Button>
-            )}
           </div>
         </div>
+
       </DialogContent>
       </Dialog>
     </>
