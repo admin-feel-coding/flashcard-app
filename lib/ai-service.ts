@@ -276,6 +276,109 @@ Example: {"topics": ["Family & Relationships", "Food & Dining", "Travel & Transp
     }
   }
 
+  // Generate additional cards for an existing deck with smart duplicate detection
+  static async generateDeckCards(request: any): Promise<LanguageCard[]> {
+    const { 
+      topic,
+      deckTitle,
+      deckDescription,
+      deckTags,
+      existingCards = [],
+      existingCardCount,
+      nativeLanguage,
+      customInstructions,
+      smartMode = false
+    } = request
+
+    // Analyze existing cards for patterns and themes
+    const existingTopics = existingCards.map((card: any, i: number) => 
+      `${i+1}. "${card.front}" → "${card.back.substring(0, 100)}${card.back.length > 100 ? '...' : ''}"`
+    ).join('\n')
+
+    // Determine optimal card count based on existing deck size and complexity
+    const getOptimalCardCount = (existingCount: number): number => {
+      if (existingCount === 0) return 10  // New deck
+      if (existingCount < 10) return 8    // Small deck - add more
+      if (existingCount < 20) return 6    // Medium deck - moderate addition
+      if (existingCount < 50) return 4    // Large deck - focused addition
+      return 3                           // Very large deck - minimal addition
+    }
+
+    const optimalCardCount = getOptimalCardCount(existingCardCount)
+
+    const systemPrompt = `You are an expert educational content creator with advanced duplicate detection capabilities. You're adding cards to the existing "${deckTitle}" deck.
+
+CURRENT DECK ANALYSIS:
+- Deck Title: "${deckTitle}"
+- Description: "${deckDescription || 'No description'}"
+- Tags: [${deckTags.join(', ')}]
+- Existing Cards: ${existingCardCount}
+- Native Language: ${nativeLanguage}
+- Topic Focus: "${topic}"
+
+EXISTING CARD ANALYSIS (MUST AVOID DUPLICATING):
+${existingCards.length > 0 ? existingTopics : 'No existing cards - this is a new deck'}
+
+SMART GENERATION REQUIREMENTS:
+1. DUPLICATE PREVENTION: Analyze all existing cards thoroughly
+2. COMPLEMENTARY CONTENT: Fill gaps and expand on existing themes
+3. OPTIMAL QUANTITY: Create exactly ${optimalCardCount} cards (AI-determined optimal amount)
+4. CONSISTENT DIFFICULTY: Match the complexity level of existing cards
+5. THEMATIC COHERENCE: Ensure cards fit the deck's learning objectives
+6. PROGRESSIVE LEARNING: Build upon concepts already covered
+
+QUALITY STANDARDS:
+- Front: Clear, specific questions/prompts
+- Back: Comprehensive answers with context
+- NO repetition of existing card concepts
+- Educational progression that enhances learning
+- Appropriate depth for the deck's apparent level
+
+${customInstructions ? `CUSTOM INSTRUCTIONS: "${customInstructions}"` : ''}
+
+Return JSON with exactly ${optimalCardCount} cards:
+{
+  "cards": [
+    {
+      "front": "Unique question/prompt not covered in existing cards",
+      "back": "Comprehensive answer that adds new value"
+    }
+  ],
+  "rationale": "Brief explanation of how these cards complement existing content"
+}`
+
+    const userPrompt = `Create ${optimalCardCount} intelligent flashcards for "${topic}" that perfectly complement the existing "${deckTitle}" deck.
+
+CRITICAL: Review all ${existingCardCount} existing cards to ensure zero duplication. Focus on gaps, extensions, and related concepts that enhance the learning experience.
+
+${customInstructions ? `Additional focus: ${customInstructions}` : 'Create the most valuable additions possible.'}`
+
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        temperature: 0.8,
+        max_tokens: 3000,
+        response_format: { type: "json_object" }
+      })
+
+      const response = completion.choices[0]?.message?.content
+      if (!response) {
+        throw new Error('No response from OpenAI')
+      }
+
+      const generatedData = JSON.parse(response)
+      return generatedData.cards || []
+
+    } catch (error) {
+      console.error('AI card generation failed:', error)
+      throw new Error('Failed to generate cards. Please try again.')
+    }
+  }
+
   // Keep the old method for backwards compatibility but rename the class
   static async generateTopicSuggestions(query: string): Promise<string[]> {
     return await this.generateLanguageTopics(query, 'B1')

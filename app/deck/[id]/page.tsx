@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { DeckHeader } from "@/components/deck/deck-header"
 import { CardList } from "@/components/deck/card-list"
 import { CreateCardDialog } from "@/components/deck/create-card-dialog"
+import { AIAddCardsDialog } from "@/components/deck/ai-add-cards-dialog"
 
 interface DeckPageProps {
   params: Promise<{ id: string }>
@@ -53,7 +54,10 @@ export default async function DeckPage({ params }: DeckPageProps) {
                 {cards?.length ? `${cards.length} card${cards.length === 1 ? "" : "s"}` : "No cards yet"}
               </p>
             </div>
-            <CreateCardDialog deckId={id} />
+            <div className="flex gap-3">
+              <AIAddCardsDialog deckId={id} deckTitle={deck.title} />
+              <CreateCardDialog deckId={id} />
+            </div>
           </div>
 
           <CardList cards={cards || []} deckId={id} />
