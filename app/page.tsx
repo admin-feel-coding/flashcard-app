@@ -31,9 +31,14 @@ export default function HomePage() {
               FlashMind
             </span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             <Link href="/auth/login">
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-2 rounded-lg font-semibold">
+              <Button variant="ghost" className="text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                Sign In
+              </Button>
+            </Link>
+            <Link href="/auth/sign-up">
+              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-sm">
                 Get Started Free
               </Button>
             </Link>
@@ -61,15 +66,21 @@ export default function HomePage() {
             Create personalized flashcards with AI, study with spaced repetition, and master any subject faster than ever.
           </p>
 
-          <div className="flex justify-center items-center mb-16">
-            <Link href="/auth/login">
-              <Button size="lg" className="px-12 py-5 text-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-bold rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-110 transform border-0 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <Sparkles className="w-6 h-6 mr-3 animate-pulse" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+            <Link href="/auth/sign-up">
+              <Button size="lg" className="w-full sm:w-auto px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
+                <Play className="w-5 h-5 mr-2" />
                 Start Learning Free
-                <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
             </Link>
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="w-full sm:w-auto px-8 py-4 text-lg border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
+            >
+              Watch Demo
+              <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
 
           {/* Social Proof */}

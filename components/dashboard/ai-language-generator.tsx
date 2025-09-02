@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 import {
   Sparkles,
   ChevronLeft,
@@ -138,6 +137,8 @@ const PROFICIENCY_LEVELS = [
 export function AILanguageGenerator() {
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(1)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [progress, setProgress] = useState(0)
 
   // Form state
   const [targetLanguage, setTargetLanguage] = useState("")
@@ -151,25 +152,6 @@ export function AILanguageGenerator() {
   const [selectedCategory, setSelectedCategory] = useState("")
 
   const router = useRouter()
-
-  // Load saved native language preference
-  useEffect(() => {
-    const saved = localStorage.getItem('flashmind-native-language')
-    if (saved) {
-      setNativeLanguage(saved)
-    }
-    
-    // Listen for language changes from settings
-    const handleLanguageChange = (event: CustomEvent) => {
-      setNativeLanguage(event.detail.language)
-    }
-    
-    window.addEventListener('nativeLanguageChange', handleLanguageChange as EventListener)
-    
-    return () => {
-      window.removeEventListener('nativeLanguageChange', handleLanguageChange as EventListener)
-    }
-  }, [])
 
   // Filter languages based on search
   const filteredTargetLanguages = useMemo(() => {
@@ -194,15 +176,15 @@ export function AILanguageGenerator() {
     setStep(1)
     setTargetLanguage("")
     setTargetLanguageSearch("")
-    // Don't reset native language - preserve user preference
-    const savedNativeLanguage = localStorage.getItem('flashmind-native-language') || 'English'
-    setNativeLanguage(savedNativeLanguage)
+    setNativeLanguage("English")
     setNativeLanguageSearch("")
     setProficiencyLevel("")
     setDeckTitle("")
     setDeckDescription("")
     setCustomFocus("")
     setSelectedCategory("")
+    setProgress(0)
+    setIsGenerating(false)
   }
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -242,39 +224,22 @@ export function AILanguageGenerator() {
 
 
   const handleGenerate = async () => {
-    // Get language flags for better visual feedback
-    const nativeFlag = getLanguageFlag(nativeLanguage)
-    const targetFlag = getLanguageFlag(targetLanguage)
-    
-    // Get focus description with icons for better info
-    const getFocusDescription = () => {
-      if (selectedCategory === "travel") return "✈️ Travel & Adventure phrases"
-      if (selectedCategory === "business") return "💼 Business vocabulary"
-      if (selectedCategory === "social") return "👥 Social conversations"
-      if (selectedCategory === "academic") return "🎓 Academic mixed content"
-      if (customFocus) return `🎯 ${customFocus}`
-      return "📚 General vocabulary"
-    }
-    
-    const focusDescription = getFocusDescription()
-    
-    // Show enhanced initial toast with flags and details
-    const toastId = toast.loading(
-      `${nativeFlag} → ${targetFlag} Creating ${targetLanguage} deck...`,
-      { 
-        description: `${proficiencyLevel} level • ${focusDescription} • 15 cards`,
-        duration: Infinity // Keep loading toast until we update it
-      }
-    )
-    
-    // Close dialog immediately to allow user to continue using the app
-    setTimeout(() => {
-      setOpen(false)
-      resetForm()
+    setIsGenerating(true)
+    setProgress(0)
+
+    // Progress simulation
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          return 100
+        }
+        return prev + Math.random() * 10
+      })
     }, 500)
 
     try {
-      const response = await fetch('/api/ai/generate-deck', {
+      const response = await fetch('/api/ai/generate-language-deck', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -283,15 +248,9 @@ export function AILanguageGenerator() {
           targetLanguage,
           nativeLanguage,
           proficiencyLevel,
-          cardCount: 15, // Default card count
-          learningFocus: selectedCategory === "travel" ? "phrases" : 
-                        selectedCategory === "business" ? "vocabulary" : 
-                        selectedCategory === "social" ? "conversation" : 
-                        selectedCategory === "academic" ? "mixed" : 
-                        customFocus ? "mixed" : "vocabulary", // Default to vocabulary
-          customFocus: customFocus || "",
           deckTitle: deckTitle || `${targetLanguage} Learning Deck`,
-          deckDescription: deckDescription || `Personalized ${targetLanguage} flashcards for ${proficiencyLevel} level`
+          deckDescription: deckDescription || `Personalized ${targetLanguage} flashcards for ${proficiencyLevel} level`,
+          customFocus: customFocus || ""
         }),
       })
 
@@ -301,34 +260,14 @@ export function AILanguageGenerator() {
         throw new Error(data.error || 'Failed to generate deck')
       }
 
-      // Enhanced success toast with flags and deck info
-      toast.success(
-        `${targetFlag} Deck created successfully!`,
-        { 
-          id: toastId,
-          description: `"${data.deck.title}" • ${proficiencyLevel} level • ${data.deck.cardCount || 15} cards ready to study`,
-          action: {
-            label: "Study Now",
-            onClick: () => window.location.href = `/study/${data.deck.id}`
-          },
-          duration: 6000 // Show success longer so users can see the action button
-        }
-      )
-      
-      // Refresh the dashboard to show the new deck
-      router.refresh()
+      setTimeout(() => {
+        setOpen(false)
+        resetForm()
+        router.refresh()
+      }, 1000)
 
     } catch (error) {
       console.error('Generation error:', error)
-      // Enhanced error toast
-      toast.error(
-        `${targetFlag} Failed to create ${targetLanguage} deck`,
-        { 
-          id: toastId,
-          description: error instanceof Error ? error.message : "Please try again with different settings",
-          duration: 5000
-        }
-      )
     }
   }
 
@@ -380,7 +319,7 @@ export function AILanguageGenerator() {
         <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto min-h-0 pt-16 sm:pt-4">
 
           {/* Step 1: Native Language */}
-          {step === 1 && (
+          {step === 1 && !isGenerating && (
             <div className="text-center space-y-4">
               <div>
                 <MessageCircle className="w-12 h-12 mx-auto mb-4 text-purple-600" />
@@ -444,7 +383,7 @@ export function AILanguageGenerator() {
           )}
 
           {/* Step 2: Target Language */}
-          {step === 2 && (
+          {step === 2 && !isGenerating && (
             <div className="text-center space-y-4">
               <div>
                 <Globe className="w-12 h-12 mx-auto mb-4 text-purple-600" />
@@ -508,7 +447,7 @@ export function AILanguageGenerator() {
           )}
 
           {/* Step 3: Proficiency Level */}
-          {step === 3 && (
+          {step === 3 && !isGenerating && (
             <div className="text-center space-y-4">
               <div>
                 <BookOpen className="w-12 h-12 mx-auto mb-4 text-purple-600" />
@@ -545,7 +484,7 @@ export function AILanguageGenerator() {
           )}
 
           {/* Step 4: Learning Focus */}
-          {step === 4 && (
+          {step === 4 && !isGenerating && (
             <div className="max-w-4xl mx-auto space-y-8">
               <div className="text-center space-y-4">
                 <div className="flex items-center justify-center gap-4">
@@ -687,10 +626,33 @@ export function AILanguageGenerator() {
             </div>
           )}
 
+          {/* Generation Progress */}
+          {isGenerating && (
+            <div className="text-center space-y-6">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                <Sparkles className="w-10 h-10 text-white animate-pulse" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                  Creating your personalized deck...
+                </h1>
+                <Progress value={progress} className="h-3 mb-4 max-w-sm mx-auto" />
+                <p className="text-gray-600 dark:text-gray-300">
+                  This may take a moment while we craft the perfect content for you
+                </p>
+              </div>
+              {progress === 100 && (
+                <div className="flex items-center justify-center gap-2 text-green-600">
+                  <CheckCircle className="w-6 h-6" />
+                  <span className="font-semibold">Deck created successfully!</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer Navigation */}
-        {(
+        {!isGenerating && (
           <div className="p-3 sm:p-4 border-t border-gray-200/50 dark:border-gray-700/50 flex-shrink-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
             <div className="flex items-center justify-between max-w-xs sm:max-w-sm mx-auto">
               <Button
