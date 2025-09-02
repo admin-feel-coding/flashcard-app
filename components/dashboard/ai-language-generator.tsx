@@ -15,11 +15,11 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { useRouter } from "next/navigation"
-import { 
-  Languages, 
-  Globe, 
-  Loader2, 
-  BookOpen, 
+import {
+  Languages,
+  Globe,
+  Loader2,
+  BookOpen,
   MessageCircle,
   Brain,
   CheckCircle,
@@ -52,74 +52,74 @@ const NATIVE_LANGUAGES = [
 ]
 
 const PROFICIENCY_LEVELS = [
-  { 
-    value: 'A1', 
-    label: 'A1 - Beginner', 
+  {
+    value: 'A1',
+    label: 'A1 - Beginner',
     description: 'Basic words and phrases',
     color: 'bg-green-100 text-green-800 border-green-300'
   },
-  { 
-    value: 'A2', 
-    label: 'A2 - Elementary', 
+  {
+    value: 'A2',
+    label: 'A2 - Elementary',
     description: 'Simple conversations',
     color: 'bg-green-100 text-green-800 border-green-300'
   },
-  { 
-    value: 'B1', 
-    label: 'B1 - Intermediate', 
+  {
+    value: 'B1',
+    label: 'B1 - Intermediate',
     description: 'Express opinions, travel situations',
     color: 'bg-yellow-100 text-yellow-800 border-yellow-300'
   },
-  { 
-    value: 'B2', 
-    label: 'B2 - Upper-Intermediate', 
+  {
+    value: 'B2',
+    label: 'B2 - Upper-Intermediate',
     description: 'Complex texts, fluent expression',
     color: 'bg-yellow-100 text-yellow-800 border-yellow-300'
   },
-  { 
-    value: 'C1', 
-    label: 'C1 - Advanced', 
+  {
+    value: 'C1',
+    label: 'C1 - Advanced',
     description: 'Flexible use for all purposes',
     color: 'bg-red-100 text-red-800 border-red-300'
   },
-  { 
-    value: 'C2', 
-    label: 'C2 - Proficient', 
+  {
+    value: 'C2',
+    label: 'C2 - Proficient',
     description: 'Near-native fluency',
     color: 'bg-red-100 text-red-800 border-red-300'
   },
 ] as const
 
 const LEARNING_FOCUS = [
-  { 
-    value: 'vocabulary', 
-    label: 'Vocabulary', 
+  {
+    value: 'vocabulary',
+    label: 'Vocabulary',
     description: 'Essential words and meanings',
-    icon: BookOpen 
+    icon: BookOpen
   },
-  { 
-    value: 'grammar', 
-    label: 'Grammar', 
+  {
+    value: 'grammar',
+    label: 'Grammar',
     description: 'Rules and structures',
-    icon: Brain 
+    icon: Brain
   },
-  { 
-    value: 'phrases', 
-    label: 'Phrases', 
+  {
+    value: 'phrases',
+    label: 'Phrases',
     description: 'Common expressions',
-    icon: MessageCircle 
+    icon: MessageCircle
   },
-  { 
-    value: 'conversation', 
-    label: 'Conversation', 
+  {
+    value: 'conversation',
+    label: 'Conversation',
     description: 'Dialogue patterns',
-    icon: Languages 
+    icon: Languages
   },
-  { 
-    value: 'mixed', 
-    label: 'Mixed', 
+  {
+    value: 'mixed',
+    label: 'Mixed',
     description: 'Balanced combination',
-    icon: Globe 
+    icon: Globe
   },
 ] as const
 
@@ -129,7 +129,7 @@ export function AILanguageGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  
+
   // Form state
   const [targetLanguage, setTargetLanguage] = useState("")
   const [nativeLanguage, setNativeLanguage] = useState("English")
@@ -141,7 +141,7 @@ export function AILanguageGenerator() {
   const [customTopic, setCustomTopic] = useState("")
   const [includeGrammarNotes, setIncludeGrammarNotes] = useState(false)
   const [includeCulture, setIncludeCulture] = useState(false)
-  
+
   const router = useRouter()
 
   // Load topic suggestions when language/level changes
@@ -176,8 +176,8 @@ export function AILanguageGenerator() {
   }, [isGenerating])
 
   const toggleTopic = (topic: string) => {
-    setSelectedTopics(prev => 
-      prev.includes(topic) 
+    setSelectedTopics(prev =>
+      prev.includes(topic)
         ? prev.filter(t => t !== topic)
         : [...prev, topic]
     )
@@ -214,7 +214,7 @@ export function AILanguageGenerator() {
       }
 
       setProgress(100)
-      
+
       // Success - close dialog and refresh
       setTimeout(() => {
         setOpen(false)
@@ -257,9 +257,9 @@ export function AILanguageGenerator() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
-          <Languages className="w-4 h-4 mr-2" />
-          AI Language Cards
+        <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-sm hover:shadow-md transition-all duration-200">
+          <Sparkles className="w-4 h-4 mr-2" />
+          Create Deck with AI
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -312,7 +312,7 @@ export function AILanguageGenerator() {
 
             {progress === 100 && (
               <div className="text-center text-green-600 font-medium">
-                ✨ Language deck generated successfully! 
+                ✨ Language deck generated successfully!
               </div>
             )}
           </div>
