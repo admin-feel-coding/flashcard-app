@@ -162,8 +162,8 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                     </div>
                 )}
 
-                <CardContent className="p-4 sm:p-6 md:p-8 lg:p-10 h-screen flex flex-col justify-between relative z-10 overflow-hidden"
-                             style={{paddingTop: (currentCard && totalCards) ? '4rem' : '2rem'}}>
+                <CardContent className="p-4 sm:p-6 md:p-8 lg:p-10 h-dvh sm:h-screen flex flex-col justify-between relative z-10 overflow-hidden"
+                             style={{paddingTop: (currentCard && totalCards) ? '3rem' : '1.5rem'}}>
 
                     {/* Main Content Area */}
                     <div className="flex-1 flex items-center justify-center overflow-hidden">

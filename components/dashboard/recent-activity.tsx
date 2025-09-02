@@ -58,73 +58,85 @@ export function RecentActivity({ recentActivities }: RecentActivityProps) {
   }
 
   return (
-    <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center gap-2">
-          <span className="text-xl">📈</span>
+    <Card className="group border-0 shadow-xl bg-gradient-to-br from-emerald-50/90 via-teal-50/80 to-cyan-50/70 dark:from-emerald-900/20 dark:via-teal-900/15 dark:to-cyan-900/10 backdrop-blur-md hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] border border-emerald-200/30 dark:border-emerald-700/30">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-lg">📈</span>
+          </div>
           Recent Activity
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         {recentActivities.length === 0 ? (
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">📚</span>
+            <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <span className="text-3xl filter drop-shadow-sm">📚</span>
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">No recent activity</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-1">Start studying to see your progress here!</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Create decks, study cards, and achieve milestones
-            </p>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">No Recent Activity</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-2">Start studying to see your progress here!</p>
+            <div className="mt-4 p-4 bg-emerald-50/80 dark:bg-emerald-900/20 rounded-2xl backdrop-blur-sm border border-emerald-200/50 dark:border-emerald-700/30">
+              <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
+                Create decks, study cards, and achieve milestones
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {recentActivities.map((activity) => (
+          <div className="space-y-3 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-200 dark:scrollbar-thumb-emerald-700 scrollbar-track-transparent">
+            {recentActivities.map((activity, index) => (
               <div
                 key={activity.id}
-                className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="group/item flex items-start gap-4 p-4 rounded-2xl bg-white/60 dark:bg-gray-700/40 hover:bg-white/80 dark:hover:bg-gray-700/60 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border border-white/50 dark:border-gray-600/30 backdrop-blur-sm"
               >
                 {/* Activity Icon */}
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
-                  <span className="text-lg">{activity.icon || '✨'}</span>
+                <div className="relative flex-shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg group-hover/item:shadow-xl group-hover/item:scale-110 transition-all duration-300">
+                    <span className="text-xl filter drop-shadow-sm">{activity.icon || '✨'}</span>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-md">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  </div>
                 </div>
 
                 {/* Activity Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h4 className="font-semibold text-gray-900 dark:text-white text-sm truncate group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400 transition-colors duration-300">
                       {activity.title}
                     </h4>
                     <Badge
                       variant="secondary"
-                      className={`text-xs px-2 py-0.5 ${getActivityTypeColor(activity.type)}`}
+                      className={`text-xs px-3 py-1 ${getActivityTypeColor(activity.type)} rounded-full font-medium shadow-sm`}
                     >
                       {getActivityTypeLabel(activity.type)}
                     </Badge>
                   </div>
                   
                   {activity.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 leading-relaxed">
                       {activity.description}
                     </p>
                   )}
 
                   {/* Deck Info */}
                   {activity.deck && (
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-2 p-2 bg-gray-50/80 dark:bg-gray-600/30 rounded-lg backdrop-blur-sm">
                       <div 
-                        className="w-3 h-3 rounded-full flex-shrink-0" 
+                        className="w-3 h-3 rounded-full flex-shrink-0 shadow-sm" 
                         style={{ backgroundColor: activity.deck.color }}
                       />
-                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      <span className="text-xs text-gray-600 dark:text-gray-300 font-medium truncate">
                         {activity.deck.title}
                       </span>
                     </div>
                   )}
 
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                      {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -132,25 +144,25 @@ export function RecentActivity({ recentActivities }: RecentActivityProps) {
         )}
 
         {recentActivities.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="grid grid-cols-3 gap-4 text-center text-sm">
-              <div>
-                <div className="font-medium text-gray-900 dark:text-white">
+          <div className="mt-6 pt-6 border-t border-emerald-200/50 dark:border-emerald-700/30">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div className="p-3 bg-blue-50/80 dark:bg-blue-900/20 rounded-2xl backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/30">
+                <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
                   {recentActivities.filter(a => a.type === 'deck_created').length}
                 </div>
-                <div className="text-gray-500 dark:text-gray-400 text-xs">Decks Created</div>
+                <div className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium">Decks Created</div>
               </div>
-              <div>
-                <div className="font-medium text-gray-900 dark:text-white">
+              <div className="p-3 bg-green-50/80 dark:bg-green-900/20 rounded-2xl backdrop-blur-sm border border-green-200/50 dark:border-green-700/30">
+                <div className="text-lg font-bold text-green-600 dark:text-green-400">
                   {recentActivities.filter(a => a.type === 'study_session').length}
                 </div>
-                <div className="text-gray-500 dark:text-gray-400 text-xs">Study Sessions</div>
+                <div className="text-xs text-green-600/80 dark:text-green-400/80 font-medium">Study Sessions</div>
               </div>
-              <div>
-                <div className="font-medium text-gray-900 dark:text-white">
+              <div className="p-3 bg-yellow-50/80 dark:bg-yellow-900/20 rounded-2xl backdrop-blur-sm border border-yellow-200/50 dark:border-yellow-700/30">
+                <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
                   {recentActivities.filter(a => a.type === 'milestone_reached').length}
                 </div>
-                <div className="text-gray-500 dark:text-gray-400 text-xs">Milestones</div>
+                <div className="text-xs text-yellow-600/80 dark:text-yellow-400/80 font-medium">Milestones</div>
               </div>
             </div>
           </div>

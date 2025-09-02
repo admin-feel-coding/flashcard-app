@@ -67,11 +67,11 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-6 lg:py-8">
         <DashboardHeader user={user} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6 lg:mb-8">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             <ProgressOverview
               totalDecks={decks?.length || 0}
               totalCards={totalCards || 0}
@@ -79,7 +79,7 @@ export default async function DashboardPage() {
             />
             <RecentActivity recentActivities={recentActivities || []} />
           </div>
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <StudyStreak studySessions={studySessions || []} />
             <DueCards dueCards={dueCards || []} />
           </div>

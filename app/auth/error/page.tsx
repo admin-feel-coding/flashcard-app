@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Suspense } from "react"
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ error: string }> }) {
-  const params = await searchParams
-
+function ErrorContent({ params }: { params: { error?: string } }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-red-900/20 dark:to-orange-900/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -60,5 +59,28 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
         </Card>
       </div>
     </div>
+  )
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-red-900/20 dark:to-orange-900/20 flex items-center justify-center p-4">
+      <div className="text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl mb-4">
+          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
+export default async function Page({ searchParams }: { searchParams: Promise<{ error: string }> }) {
+  const params = await searchParams
+
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ErrorContent params={params} />
+    </Suspense>
   )
 }
