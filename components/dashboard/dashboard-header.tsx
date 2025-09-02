@@ -1,6 +1,6 @@
 "use client"
 
-import { createClient } from "@/lib/supabase/client"
+import { logout } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import type { User } from "@supabase/supabase-js"
@@ -11,10 +11,9 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await logout()
     router.push("/")
   }
 

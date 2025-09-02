@@ -11,14 +11,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { TagsInput } from "@/components/ui/tags-input"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { Loader2, Edit3 } from "lucide-react"
 
 const DECK_COLORS = [
   "#3b82f6", // blue
@@ -31,8 +30,21 @@ const DECK_COLORS = [
   "#84cc16", // lime
 ]
 
-export function CreateDeckDialog() {
-  const [open, setOpen] = useState(false)
+interface Deck {
+  id: string
+  title: string
+  description: string | null
+  color: string
+  tags?: string[] | null
+}
+
+interface EditDeckDialogProps {
+  deck: Deck
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function EditDeckDialog({ deck, open, onOpenChange }: EditDeckDialogProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [selectedColor, setSelectedColor] = useState(DECK_COLORS[0])
@@ -41,6 +53,17 @@ export function CreateDeckDialog() {
   const [error, setError] = useState<string | null>(null)
   const [userTags, setUserTags] = useState<string[]>([])
   const router = useRouter()
+
+  // Initialize form with deck data when dialog opens
+  useEffect(() => {
+    if (open && deck) {
+      setTitle(deck.title)
+      setDescription(deck.description || "")
+      setSelectedColor(deck.color)
+      setTags(deck.tags || [])
+      setError(null)
+    }
+  }, [open, deck])
 
   // Load user's existing tags for suggestions
   useEffect(() => {
@@ -78,38 +101,34 @@ export function CreateDeckDialog() {
 
       if (!user) throw new Error("Not authenticated")
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("decks")
-        .insert({
+        .update({
           title: title.trim(),
           description: description.trim() || null,
           color: selectedColor,
           tags: tags.length > 0 ? tags : null,
-          user_id: user.id,
+          updated_at: new Date().toISOString(),
         })
-        .select()
-        .single()
+        .eq("id", deck.id)
+        .eq("user_id", user.id)
 
       if (error) throw error
 
-      setOpen(false)
-      setTitle("")
-      setDescription("")
-      setSelectedColor(DECK_COLORS[0])
-      setTags([])
+      onOpenChange(false)
       router.refresh()
 
-      // Show success toast (could be enhanced with a toast library)
-      console.log("Deck created successfully!")
+      // Show success message (could be enhanced with a toast library)
+      console.log("Deck updated successfully!")
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to create deck")
+      setError(error instanceof Error ? error.message : "Failed to update deck")
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen)
+    onOpenChange(newOpen)
     if (!newOpen) {
       setError(null)
     }
@@ -117,24 +136,21 @@ export function CreateDeckDialog() {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          New Deck
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create New Deck</DialogTitle>
-          <DialogDescription>Create a new flashcard deck to organize your learning materials.</DialogDescription>
+          <DialogTitle className="flex items-center gap-2">
+            <Edit3 className="w-5 h-5" />
+            Edit Deck
+          </DialogTitle>
+          <DialogDescription>
+            Update your flashcard deck details.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Deck Title</Label>
+            <Label htmlFor="edit-title">Deck Title</Label>
             <Input
-              id="title"
+              id="edit-title"
               placeholder="e.g., Spanish Vocabulary"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -144,9 +160,9 @@ export function CreateDeckDialog() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
+            <Label htmlFor="edit-description">Description (Optional)</Label>
             <Textarea
-              id="description"
+              id="edit-description"
               placeholder="Brief description of what this deck covers..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -193,7 +209,7 @@ export function CreateDeckDialog() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setOpen(false)}
+              onClick={() => onOpenChange(false)}
               className="flex-1"
               disabled={isLoading}
             >
@@ -207,10 +223,10 @@ export function CreateDeckDialog() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  Saving...
                 </>
               ) : (
-                "Create Deck"
+                "Save Changes"
               )}
             </Button>
           </div>

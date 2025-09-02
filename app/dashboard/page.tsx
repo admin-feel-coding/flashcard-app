@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
-import { DeckGrid } from "@/components/dashboard/deck-grid"
-import { CreateDeckDialog } from "@/components/dashboard/create-deck-dialog"
+import { DeckManagement } from "@/components/dashboard/deck-management"
 import { ProgressOverview } from "@/components/dashboard/progress-overview"
 import { StudyStreak } from "@/components/dashboard/study-streak"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
@@ -71,12 +70,13 @@ export default async function DashboardPage() {
         <DashboardHeader user={user} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
             <ProgressOverview
               totalDecks={decks?.length || 0}
               totalCards={totalCards || 0}
               studySessions={studySessions || []}
             />
+            <RecentActivity recentSessions={recentSessions || []} />
           </div>
           <div className="space-y-6">
             <StudyStreak studySessions={studySessions || []} />
@@ -84,25 +84,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
-            <RecentActivity recentSessions={recentSessions || []} />
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Flashcard Decks</h2>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
-                {decks?.length ? `${decks.length} deck${decks.length === 1 ? "" : "s"}` : "No decks yet"}
-              </p>
-            </div>
-            <CreateDeckDialog />
-          </div>
-
-          <DeckGrid decks={decks || []} />
-        </div>
+        <DeckManagement decks={decks || []} />
       </div>
     </div>
   )
