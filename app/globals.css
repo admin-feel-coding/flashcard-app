@@ -157,4 +157,36 @@
   .animate-pulse-subtle {
     animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  /* Mobile browser viewport fixes */
+  html {
+    /* Fallback for older browsers */
+    height: 100vh;
+    /* Dynamic viewport height that accounts for mobile browser toolbars */
+    height: 100dvh;
+    /* Additional fix for iOS webkit */
+    height: -webkit-fill-available;
+  }
+
+  body {
+    /* Ensure body stretches to full height */
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
+
+  /* Specific fixes for iOS mobile browsers */
+  @supports (-webkit-touch-callout: none) {
+    .mobile-full-height {
+      height: -webkit-fill-available;
+      min-height: -webkit-fill-available;
+    }
+  }
+
+  /* Enhanced safe area support */
+  @supports (padding: max(0px)) {
+    .mobile-safe-bottom {
+      padding-bottom: max(1rem, calc(1rem + env(safe-area-inset-bottom) + 20px)) !important;
+    }
+  }
 }
