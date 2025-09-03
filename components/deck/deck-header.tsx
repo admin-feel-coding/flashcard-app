@@ -3,7 +3,18 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, MoreVertical, Edit, Trash2, Tags } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+import { useState } from "react"
+import { EditDeckDialog } from "./edit-deck-dialog"
+import { DeleteDeckDialog } from "./delete-deck-dialog"
+import { ManageTagsDialog } from "./manage-tags-dialog"
 
 interface Deck {
   id: string
@@ -11,6 +22,7 @@ interface Deck {
   description: string | null
   color: string
   created_at: string
+  tags?: string[] | null
 }
 
 interface DeckHeaderProps {
@@ -19,6 +31,9 @@ interface DeckHeaderProps {
 }
 
 export function DeckHeader({ deck, cardCount }: DeckHeaderProps) {
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showTagsDialog, setShowTagsDialog] = useState(false)
   return (
     <div className="mb-4 sm:mb-6 lg:mb-8">
       <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
@@ -36,10 +51,55 @@ export function DeckHeader({ deck, cardCount }: DeckHeaderProps) {
           <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
             <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex-shrink-0 mt-1 sm:mt-1" style={{ backgroundColor: deck.color }} />
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2 break-words">{deck.title}</h1>
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white break-words flex-1">{deck.title}</h1>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 flex-shrink-0">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => setShowEditDialog(true)} className="cursor-pointer">
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit Deck
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowTagsDialog(true)} className="cursor-pointer">
+                      <Tags className="mr-2 h-4 w-4" />
+                      Manage Tags
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => setShowDeleteDialog(true)} 
+                      className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete Deck
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              
               {deck.description && (
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-3 sm:mb-4 break-words">{deck.description}</p>
               )}
+              
+              {/* Tags */}
+              {deck.tags && deck.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3 sm:mb-4">
+                  {deck.tags.slice(0, 5).map((tag, index) => (
+                    <Badge key={index} variant="outline" className="text-xs px-2 py-0.5">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {deck.tags.length > 5 && (
+                    <Badge variant="outline" className="text-xs px-2 py-0.5 text-gray-500">
+                      +{deck.tags.length - 5}
+                    </Badge>
+                  )}
+                </div>
+              )}
+              
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                 <Badge variant="secondary" className="text-xs sm:text-sm w-fit">
                   {cardCount} card{cardCount !== 1 ? "s" : ""}
@@ -71,6 +131,26 @@ export function DeckHeader({ deck, cardCount }: DeckHeaderProps) {
           )}
         </div>
       </div>
+
+      {/* Dialogs */}
+      <EditDeckDialog 
+        open={showEditDialog} 
+        onOpenChange={setShowEditDialog}
+        deck={deck}
+      />
+      
+      <DeleteDeckDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        deck={deck}
+        cardCount={cardCount}
+      />
+      
+      <ManageTagsDialog
+        open={showTagsDialog}
+        onOpenChange={setShowTagsDialog}
+        deck={deck}
+      />
     </div>
   )
 }

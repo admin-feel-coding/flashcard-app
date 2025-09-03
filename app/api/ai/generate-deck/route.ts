@@ -41,11 +41,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate learning focus
-    const validFocus = ['vocabulary', 'grammar', 'phrases', 'conversation', 'mixed']
-    if (!validFocus.includes(body.learningFocus)) {
+    // Validate learning focus (allow any string for custom topics)
+    if (!body.learningFocus || typeof body.learningFocus !== 'string' || body.learningFocus.trim() === '') {
       return NextResponse.json(
-        { error: 'Invalid learning focus. Must be vocabulary, grammar, phrases, conversation, or mixed' }, 
+        { error: 'Learning focus is required and must be a non-empty string' }, 
         { status: 400 }
       )
     }

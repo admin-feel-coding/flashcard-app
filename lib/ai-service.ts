@@ -30,6 +30,7 @@ export interface LanguageDeck {
   color: string
   targetLanguage: string
   proficiencyLevel: string
+  createdAt: string
 }
 
 const DECK_COLORS = [
@@ -75,131 +76,50 @@ export class AILanguageLearningService {
       'mixed': 'Balanced combination of vocabulary, grammar, and phrases'
     }
 
-    const systemPrompt = `You are an expert language teacher specializing in creating effective flashcards for language learning. Your goal is to create cards that help students progress naturally from their current proficiency level.
+    const userTopic = customTopic || learningFocus
+    const isAdvanced = ['A2', 'B1', 'B2', 'C1', 'C2'].includes(proficiencyLevel)
 
-LANGUAGE LEARNING PRINCIPLES:
-1. Present new content in context with real-world examples
-2. Include pronunciation guides when helpful for learners
-3. Provide practical usage scenarios
-4. Connect to cultural context when relevant
-5. Build on existing knowledge progressively
-6. Use spaced repetition-friendly format
+    const systemPrompt = `Create 10 ${targetLanguage} flashcards about: "${userTopic}"
 
-PROFICIENCY LEVEL: ${proficiencyLevel} - ${proficiencyDescriptions[proficiencyLevel]}
-LEARNING FOCUS: ${learningFocus} - ${focusDescriptions[learningFocus]}
+REQUIREMENTS:
+- Each card MUST have exactly 2 examples
+- Examples MUST be different sentences
+- Examples MUST show real usage
+- Include pronunciation, translation, usage notes
 
-CARD DESIGN RULES:
-- FRONT: Present target language content (word, phrase, sentence, or grammar concept)
-- BACK: Provide ${nativeLanguage} translation/explanation plus contextual information
-- Include pronunciation in IPA or simplified phonetics when helpful
-- Add example sentences showing practical usage
-- Include grammar notes for complex structures
-- Add cultural context when it aids understanding
+${isAdvanced ? `Use ${targetLanguage} for questions.` : `Can use ${nativeLanguage} for questions.`}
 
-FOCUS-SPECIFIC GUIDELINES:
-${learningFocus === 'vocabulary' ? `
-- Present words with gender/article where applicable
-- Include common collocations and word families
-- Show different meanings in various contexts
-` : ''}
-${learningFocus === 'grammar' ? `
-- Explain grammar rules clearly with examples
-- Show correct vs incorrect usage
-- Include conjugations or declensions where relevant
-` : ''}
-${learningFocus === 'phrases' ? `
-- Present phrases in natural contexts
-- Show when and how to use each phrase
-- Include variations and alternatives
-` : ''}
-${learningFocus === 'conversation' ? `
-- Present dialogue patterns and responses
-- Include formal vs informal variations
-- Show appropriate situations for each expression
-` : ''}
+Return JSON only.`
 
-Generate exactly ${cardCount} flashcards for learning ${targetLanguage} at ${proficiencyLevel} level.`
+    const userPrompt = `Create 10 flashcards about "${userTopic}" in ${targetLanguage}.
 
-    let topicsText = ''
-    if (customTopic) {
-      topicsText = `SPECIFIC LEARNING REQUEST: Focus specifically on "${customTopic}". Create cards that directly teach this concept.`
-    } else if (topics.length > 0) {
-      topicsText = `Focus on these topics: ${topics.join(', ')}.`
-    } else {
-      topicsText = 'Cover general, practical vocabulary and expressions suitable for daily life.'
-    }
+CRITICAL: Every card MUST have exactly 2 examples.
 
-    const userPrompt = `Create language learning flashcards with ANKI-STYLE structured backs. Each card back should be well-organized with clear sections.
-
-TARGET LANGUAGE: ${targetLanguage}
-NATIVE LANGUAGE: ${nativeLanguage}
-PROFICIENCY LEVEL: ${proficiencyLevel} 
-LEARNING FOCUS: ${learningFocus}
-NUMBER OF CARDS: ${cardCount}
-${topicsText}
-
-CARD STRUCTURE REQUIREMENTS:
-- Front: Simple, clear target language content
-- Back: Structured with multiple sections using HTML formatting
-
-Return JSON with:
+Card structure MUST be:
 {
-  "title": "Engaging deck title in ${nativeLanguage} (max 60 chars)",
-  "description": "Brief description of what students will learn (max 150 chars)", 
-  "cards": [
-    {
-      "front": "Target language content (word/phrase/sentence)",
-      "back": "HTML-formatted structured answer with sections"
-    }
-  ],
-  "tags": ["${targetLanguage.toLowerCase()}", "${proficiencyLevel.toLowerCase()}", "${learningFocus}"],
-  "suggestedColor": "blue, emerald, amber, red, violet, cyan, orange, or lime"
+  "front": "simple trigger word",
+  "back": "<div class='card-back'><div class='translation'><strong>Translation:</strong> answer</div><div class='pronunciation'><strong>Pronunciation:</strong> /sound/</div><div class='examples'><strong>Examples:</strong><ul><li>First example sentence → Translation</li><li>Second example sentence → Translation</li></ul></div><div class='usage'><strong>Usage:</strong> When/how to use</div></div>"
 }
 
-BACK STRUCTURE TEMPLATE (use HTML):
-<div class="card-back">
-  <div class="translation"><strong>Translation:</strong> [Main translation]</div>
-  <div class="pronunciation"><strong>Pronunciation:</strong> [IPA or phonetic guide]</div>
-  <div class="word-type"><strong>Type:</strong> [noun/verb/adjective/etc.]</div>
-  <div class="examples">
-    <strong>Examples:</strong>
-    <ul>
-      <li>[Example 1 in target language] → [Translation]</li>
-      <li>[Example 2 in target language] → [Translation]</li>
-    </ul>
-  </div>
-  ${includeGrammarNotes ? '<div class="grammar"><strong>Grammar Notes:</strong> [Grammar explanation]</div>' : ''}
-  ${includeCulture ? '<div class="culture"><strong>Cultural Note:</strong> [Cultural context]</div>' : ''}
-  <div class="usage"><strong>Usage:</strong> [When/how to use this]</div>
-</div>
+Examples:
+- Phrasal verbs: "get up" → 2 different sentences showing usage
+- Travel: "airport" → 2 different airport situations  
+- Cooking: "boil" → 2 different cooking contexts
 
-EXAMPLE CARDS:
+JSON response:
+{
+  "title": "[Emoji] ${userTopic} title",
+  "description": "Learn ${userTopic}",
+  "cards": [...10 cards with 2 examples each...],
+  "tags": ["${targetLanguage.toLowerCase()}", "${proficiencyLevel.toLowerCase()}", "${userTopic.toLowerCase()}"],
+  "suggestedColor": "blue"
+}
 
-VOCABULARY CARD:
-Front: "el médico"
-Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> the doctor</div><div class='pronunciation'><strong>Pronunciation:</strong> /el ˈme.ði.ko/</div><div class='word-type'><strong>Type:</strong> masculine noun</div><div class='examples'><strong>Examples:</strong><ul><li>El médico está en el hospital → The doctor is at the hospital</li><li>Necesito ver al médico → I need to see the doctor</li></ul></div><div class='usage'><strong>Usage:</strong> General term for doctor, used in formal and informal contexts</div></div>"
-
-GRAMMAR CARD:
-Front: "How do you form the past tense with 'haber'?"
-Back: "<div class='card-back'><div class='translation'><strong>Answer:</strong> Present perfect = haber (present) + past participle</div><div class='examples'><strong>Examples:</strong><ul><li>He comido → I have eaten</li><li>Has vivido → You have lived</li><li>Han estudiado → They have studied</li></ul></div><div class='grammar'><strong>Formation:</strong> he/has/ha/hemos/habéis/han + -ado/-ido endings</div><div class='usage'><strong>Usage:</strong> Actions completed in the recent past or with current relevance</div></div>"
-
-PHRASE CARD:
-Front: "¿Cómo estás?"
-Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> How are you?</div><div class='pronunciation'><strong>Pronunciation:</strong> /ˈko.mo es.ˈtas/</div><div class='examples'><strong>Common Responses:</strong><ul><li>Muy bien, gracias → Very well, thanks</li><li>Bien, ¿y tú? → Good, and you?</li></ul></div><div class='usage'><strong>Usage:</strong> Informal greeting, use with friends, family, peers</div><div class='culture'><strong>Cultural Note:</strong> More personal than '¿Qué tal?' - shows genuine interest</div></div>"
-
-Create authentic, practical content that helps students communicate naturally. Each card should teach something immediately useful for real-world ${targetLanguage} communication.
-
-IMPORTANT: 
-- Use proper HTML structure in the "back" field
-- Make content rich but well-organized  
-- Include practical examples students can use immediately
-- Adjust complexity to ${proficiencyLevel} level
-
-Generate exactly ${cardCount} flashcards for learning ${targetLanguage} at ${proficiencyLevel} level.`
+MANDATORY: 2 examples per card. No exceptions.`
 
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
@@ -235,7 +155,8 @@ Generate exactly ${cardCount} flashcards for learning ${targetLanguage} at ${pro
         tags: generatedData.tags,
         color: colorMap[generatedData.suggestedColor] || DECK_COLORS[0],
         targetLanguage,
-        proficiencyLevel
+        proficiencyLevel,
+        createdAt: new Date().toISOString()
       }
 
     } catch (error) {
@@ -258,7 +179,7 @@ Example: {"topics": ["Family & Relationships", "Food & Dining", "Travel & Transp
 
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.7,
         max_tokens: 200,
@@ -306,7 +227,7 @@ Example: {"topics": ["Family & Relationships", "Food & Dining", "Travel & Transp
 
     const optimalCardCount = getOptimalCardCount(existingCardCount)
 
-    const systemPrompt = `You are an expert educational content creator with advanced duplicate detection capabilities. You're adding cards to the existing "${deckTitle}" deck.
+    const systemPrompt = `You are an expert educational content creator with advanced duplicate detection capabilities. You're adding cards to the existing "${deckTitle}" deck using the same format structure as existing cards.
 
 CURRENT DECK ANALYSIS:
 - Deck Title: "${deckTitle}"
@@ -326,13 +247,13 @@ SMART GENERATION REQUIREMENTS:
 4. CONSISTENT DIFFICULTY: Match the complexity level of existing cards
 5. THEMATIC COHERENCE: Ensure cards fit the deck's learning objectives
 6. PROGRESSIVE LEARNING: Build upon concepts already covered
+7. FORMAT CONSISTENCY: Use the same HTML structure as the deck creation wizard
 
-QUALITY STANDARDS:
-- Front: Clear, specific questions/prompts
-- Back: Comprehensive answers with context
-- NO repetition of existing card concepts
-- Educational progression that enhances learning
-- Appropriate depth for the deck's apparent level
+CARD FORMAT REQUIREMENTS:
+- Front: Simple, clear target language content
+- Back: Rich HTML structure with multiple learning sections
+- Use proper HTML structure with CSS classes: card-back, main-answer, pronunciation, word-type, examples, grammar, culture, usage
+- Include sections that enhance learning: pronunciation guides, example sentences, grammar notes, cultural context
 
 ${customInstructions ? `CUSTOM INSTRUCTIONS: "${customInstructions}"` : ''}
 
@@ -340,22 +261,63 @@ Return JSON with exactly ${optimalCardCount} cards:
 {
   "cards": [
     {
-      "front": "Unique question/prompt not covered in existing cards",
-      "back": "Comprehensive answer that adds new value"
+      "front": "Target language content (word/phrase/sentence)",
+      "back": "HTML-formatted structured answer matching deck creation format"
     }
   ],
   "rationale": "Brief explanation of how these cards complement existing content"
 }`
 
-    const userPrompt = `Create ${optimalCardCount} intelligent flashcards for "${topic}" that perfectly complement the existing "${deckTitle}" deck.
+    const userPrompt = `Create ${optimalCardCount} ANKI-STYLE flashcards for "${topic}" that perfectly complement the existing "${deckTitle}" deck.
 
-CRITICAL: Review all ${existingCardCount} existing cards to ensure zero duplication. Focus on gaps, extensions, and related concepts that enhance the learning experience.
+CRITICAL: Review all ${existingCardCount} existing cards to ensure zero duplication. Focus on memory challenges and difficult concepts that enhance learning.
 
-${customInstructions ? `Additional focus: ${customInstructions}` : 'Create the most valuable additions possible.'}`
+ANKI PRINCIPLES FOR THESE CARDS:
+- ONE concept per card (atomic learning)
+- Focus on what's hard to remember
+- Simple, testable questions
+- Minimal but sufficient answers
+- Target genuine memory challenges
+
+RICH HTML FORMAT (match existing deck style):
+<div class="card-back">
+  <div class="translation"><strong>Translation:</strong> [Primary answer/translation]</div>
+  <div class="pronunciation"><strong>Pronunciation:</strong> [Phonetic pronunciation when helpful]</div>
+  <div class="word-type"><strong>Type:</strong> [Part of speech: noun, verb, adjective, etc.]</div>
+  <div class="examples"><strong>Examples:</strong>
+    <ul>
+      <li>[Example sentence in context → Translation]</li>
+      <li>[Additional example if needed → Translation]</li>
+    </ul>
+  </div>
+  <div class="grammar"><strong>Grammar:</strong> [Grammar notes for difficult patterns]</div>
+  <div class="culture"><strong>Culture:</strong> [Cultural context when relevant]</div>
+  <div class="usage"><strong>Usage:</strong> [Usage notes for tricky words]</div>
+</div>
+
+CARD TYPES TO PRIORITIZE:
+1. Tricky vocabulary (false friends, similar words)
+2. Grammar patterns that are hard to remember
+3. Cloze deletions with context
+4. Reverse vocabulary tests
+5. Pronunciation of difficult sounds
+6. Gender/article assignments
+7. Preposition usage challenges
+
+EXAMPLE RICH FORMATS:
+Vocabulary: Front: "gato" → Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> cat</div><div class='pronunciation'><strong>Pronunciation:</strong> /ˈɡato/</div><div class='word-type'><strong>Type:</strong> noun (masculine)</div><div class='examples'><strong>Examples:</strong><ul><li>El gato está durmiendo → The cat is sleeping</li></ul></div></div>"
+
+Cloze: Front: "Je _____ français" → Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> parle</div><div class='grammar'><strong>Grammar:</strong> 1st person singular of 'parler'</div><div class='examples'><strong>Examples:</strong><ul><li>Je parle français → I speak French</li></ul></div></div>"
+
+Idiomatic: Front: "take with a grain of salt" → Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> tomar algo con cautela</div><div class='pronunciation'><strong>Pronunciation:</strong> /tə teɪk ˈsʌmθɪŋ wɪð ə ɡreɪn əv sɔlt/</div><div class='word-type'><strong>Type:</strong> idiomatic expression</div><div class='examples'><strong>Examples:</strong><ul><li>You should take his advice with a grain of salt → Deberías tomar su consejo con cautela</li></ul></div><div class='usage'><strong>Usage:</strong> Use when suggesting skepticism about something</div></div>"
+
+${customInstructions ? `Additional focus: ${customInstructions}` : 'Focus on memory challenges and difficult-to-remember concepts.'}
+
+Generate exactly ${optimalCardCount} atomic, memory-optimized flashcards that complement the existing deck without duplication.`
 
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
