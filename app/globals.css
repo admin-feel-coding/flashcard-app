@@ -190,3 +190,132 @@
     }
   }
 }
+
+/* Custom styles for flashcard content - responsive card styling */
+@layer components {
+  .card-content {
+    @apply space-y-3;
+    line-height: 1.6;
+  }
+  
+  .card-content .card-back {
+    @apply space-y-4;
+  }
+  
+  /* Removed main-answer styling since we're not using it anymore */
+  
+  .card-content .translation {
+    @apply p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg;
+  }
+  
+  .card-content .pronunciation {
+    @apply p-3 bg-green-50 dark:bg-green-900/20 rounded-lg;
+  }
+  
+  .card-content .word-type {
+    @apply inline-block px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-full text-sm font-medium mb-2;
+  }
+  
+  .card-content .examples {
+    @apply p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg;
+  }
+  
+  .card-content .examples ul {
+    @apply mt-2 space-y-2;
+  }
+  
+  .card-content .examples li {
+    @apply text-sm sm:text-base p-2 bg-white dark:bg-gray-800 rounded border-l-3 border-yellow-400 pl-3;
+  }
+  
+  .card-content .grammar {
+    @apply p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg;
+  }
+  
+  .card-content .culture {
+    @apply p-3 bg-pink-50 dark:bg-pink-900/20 rounded-lg;
+  }
+  
+  .card-content .usage {
+    @apply p-3 bg-teal-50 dark:bg-teal-900/20 rounded-lg;
+  }
+  
+  .card-content .memory-tip {
+    @apply p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border-l-4 border-orange-400;
+  }
+  
+  .card-content .related-words {
+    @apply p-3 bg-cyan-50 dark:bg-cyan-900/20 rounded-lg;
+  }
+  
+  .card-content .synonyms {
+    @apply p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg;
+  }
+  
+  .card-content .antonyms {
+    @apply p-3 bg-red-50 dark:bg-red-900/20 rounded-lg;
+  }
+  
+  .card-content .conjugations {
+    @apply p-3 bg-violet-50 dark:bg-violet-900/20 rounded-lg;
+  }
+  
+  .card-content .conjugations ul {
+    @apply mt-2 space-y-1;
+  }
+  
+  .card-content .conjugations li {
+    @apply text-sm p-1 bg-white dark:bg-gray-800 rounded;
+  }
+  
+  .card-content strong {
+    @apply font-semibold text-gray-900 dark:text-gray-100;
+  }
+  
+  /* Responsive text sizing for mobile */
+  @media (max-width: 640px) {
+    
+    .card-content > div {
+      @apply p-2 text-sm;
+    }
+    
+    .card-content .examples li {
+      @apply text-xs p-1.5 leading-relaxed;
+    }
+    
+    .card-content strong {
+      @apply text-sm;
+    }
+  }
+  
+  /* Better spacing on medium screens */
+  @media (min-width: 768px) {
+    .card-content {
+      @apply space-y-5;
+    }
+    
+    .card-content .card-back {
+      @apply space-y-5;
+    }
+  }
+  
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    
+    .card-content > div {
+      @apply text-xs p-2;
+    }
+  }
+  
+  /* Ensure proper word breaking */
+  .card-content * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Better readability */
+  .card-content p {
+    @apply mb-2;
+  }
+}

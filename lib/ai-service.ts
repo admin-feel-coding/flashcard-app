@@ -19,7 +19,23 @@ export interface LanguageDeckRequest {
 
 export interface LanguageCard {
   front: string
-  back: string // Now contains structured HTML content
+  back: string
+  examples?: Array<{text: string, translation?: string} | string>
+  tags?: string[]
+  pronunciation?: string
+  translation?: string
+  wordType?: string
+  grammarNotes?: string
+  culturalContext?: string
+  usageNotes?: string
+  difficulty?: 'beginner' | 'intermediate' | 'advanced'
+  audioUrl?: string
+  imageUrl?: string
+  mnemonicHint?: string
+  relatedWords?: string[]
+  conjugations?: Record<string, string>
+  synonyms?: string[]
+  antonyms?: string[]
 }
 
 export interface LanguageDeck {
@@ -31,6 +47,21 @@ export interface LanguageDeck {
   targetLanguage: string
   proficiencyLevel: string
   createdAt: string
+  metadata?: {
+    targetLanguage: string
+    nativeLanguage: string
+    proficiencyLevel: string
+    learningFocus: string
+    totalCards: number
+    estimatedStudyTime: string
+    difficulty: string
+  }
+  studyTips?: string[]
+  additionalResources?: {
+    grammarReference: string
+    vocabularyThemes: string[]
+    practiceExercises: string
+  }
 }
 
 const DECK_COLORS = [
@@ -46,11 +77,11 @@ const DECK_COLORS = [
 
 export class AILanguageLearningService {
   static async generateLanguageDeck(request: LanguageDeckRequest): Promise<LanguageDeck> {
-    const { 
-      targetLanguage, 
-      nativeLanguage, 
-      proficiencyLevel, 
-      cardCount, 
+    const {
+      targetLanguage,
+      nativeLanguage,
+      proficiencyLevel,
+      cardCount,
       learningFocus,
       topics = [],
       customTopic,
@@ -79,43 +110,63 @@ export class AILanguageLearningService {
     const userTopic = customTopic || learningFocus
     const isAdvanced = ['A2', 'B1', 'B2', 'C1', 'C2'].includes(proficiencyLevel)
 
-    const systemPrompt = `Create 10 ${targetLanguage} flashcards about: "${userTopic}"
+    const systemPrompt = `You are an expert language learning flashcard creator. Create comprehensive flashcards for ${targetLanguage} learners at ${proficiencyLevel} level.
 
 REQUIREMENTS:
-- Each card MUST have exactly 2 examples
-- Examples MUST be different sentences
-- Examples MUST show real usage
-- Include pronunciation, translation, usage notes
+- Return ONLY valid JSON
+- Each card must include practical examples
+- Include pronunciation guides when helpful
+- Adapt difficulty to ${proficiencyLevel} level
+- Focus on: ${focusDescriptions[learningFocus]}
 
-${isAdvanced ? `Use ${targetLanguage} for questions.` : `Can use ${nativeLanguage} for questions.`}
+${isAdvanced ? `Use ${targetLanguage} for card fronts.` : `Can use ${nativeLanguage} for clarification on card fronts.`}`
 
-Return JSON only.`
+    const userPrompt = `Create ${cardCount} flashcards for "${userTopic}" in ${targetLanguage} for ${nativeLanguage} speakers (${proficiencyLevel} level).
 
-    const userPrompt = `Create 10 flashcards about "${userTopic}" in ${targetLanguage}.
-
-CRITICAL: Every card MUST have exactly 2 examples.
-
-Card structure MUST be:
+Return ONLY valid JSON. Structure:
 {
-  "front": "simple trigger word",
-  "back": "<div class='card-back'><div class='translation'><strong>Translation:</strong> answer</div><div class='pronunciation'><strong>Pronunciation:</strong> /sound/</div><div class='examples'><strong>Examples:</strong><ul><li>First example sentence → Translation</li><li>Second example sentence → Translation</li></ul></div><div class='usage'><strong>Usage:</strong> When/how to use</div></div>"
+  "title": "Creative, engaging title with emoji that captures the essence of ${userTopic} learning",
+  "description": "Detailed, motivational description (2-3 sentences) explaining what learners will master and why it's valuable for ${proficiencyLevel} level ${targetLanguage} learning",
+  "cards": [
+    {
+      "front": "word/phrase in ${targetLanguage}",
+      "translation": "${nativeLanguage} translation",
+      "pronunciation": "phonetic guide",
+      "wordType": "noun/verb/adjective/etc",
+      "examples": [
+        {"text": "example sentence in ${targetLanguage}", "translation": "${nativeLanguage} translation"},
+        {"text": "another example in ${targetLanguage}", "translation": "${nativeLanguage} translation"}
+      ],
+      "grammarNotes": "grammar explanation if relevant",
+      "usageNotes": "when/how to use",
+      "mnemonicHint": "memory tip",
+      "difficulty": "${proficiencyLevel === 'A1' || proficiencyLevel === 'A2' ? 'beginner' : proficiencyLevel === 'B1' || proficiencyLevel === 'B2' ? 'intermediate' : 'advanced'}",
+      "culturalContext": "cultural notes if relevant",
+      "relatedWords": ["word1", "word2"],
+      "synonyms": ["synonym1"],
+      "antonyms": ["antonym1"]
+    }
+  ],
+  "tags": ["${targetLanguage.toLowerCase()}", "${proficiencyLevel.toLowerCase()}", "${userTopic.toLowerCase()}"]
 }
 
-Examples:
-- Phrasal verbs: "get up" → 2 different sentences showing usage
-- Travel: "airport" → 2 different airport situations  
-- Cooking: "boil" → 2 different cooking contexts
+Requirements:
+- Create exactly ${cardCount} cards
+- Keep responses concise
+- Focus on ${learningFocus}
+- Examples must be practical
+- Include pronunciation for all words
 
-JSON response:
-{
-  "title": "[Emoji] ${userTopic} title",
-  "description": "Learn ${userTopic}",
-  "cards": [...10 cards with 2 examples each...],
-  "tags": ["${targetLanguage.toLowerCase()}", "${proficiencyLevel.toLowerCase()}", "${userTopic.toLowerCase()}"],
-  "suggestedColor": "blue"
-}
+TITLE GUIDELINES:
+- Use relevant emoji (📚✈️🍕🏠💼🎵 etc.)
+- Make it specific and engaging (not just "${userTopic}")
+- Examples: "✈️ Master Travel Conversations", "🍕 Italian Food & Restaurant Essentials", "🏠 Home & Family Vocabulary Builder"
 
-MANDATORY: 2 examples per card. No exceptions.`
+DESCRIPTION GUIDELINES:
+- Explain the practical value and real-world applications
+- Mention the proficiency level and learning focus
+- Be motivational and specific about what learners will achieve
+- Example: "Master essential travel vocabulary and phrases to confidently navigate airports, hotels, and tourist attractions. Perfect for ${proficiencyLevel} learners planning trips or working in tourism, these cards focus on practical conversations you'll actually use."`
 
     try {
       const completion = await openai.chat.completions.create({
@@ -125,7 +176,7 @@ MANDATORY: 2 examples per card. No exceptions.`
           { role: "user", content: userPrompt }
         ],
         temperature: 0.8,
-        max_tokens: 4000,
+        max_tokens: 8000, // Increased for more comprehensive responses
         response_format: { type: "json_object" }
       })
 
@@ -134,12 +185,18 @@ MANDATORY: 2 examples per card. No exceptions.`
         throw new Error('No response from OpenAI')
       }
 
-      const generatedData = JSON.parse(response)
-      
+      let generatedData
+      try {
+        generatedData = JSON.parse(response)
+      } catch (parseError) {
+        console.error('Failed to parse OpenAI response:', response)
+        throw new Error('Invalid JSON response from AI')
+      }
+
       // Map color name to hex
       const colorMap: Record<string, string> = {
         blue: "#3b82f6",
-        emerald: "#10b981", 
+        emerald: "#10b981",
         amber: "#f59e0b",
         red: "#ef4444",
         violet: "#8b5cf6",
@@ -148,15 +205,52 @@ MANDATORY: 2 examples per card. No exceptions.`
         lime: "#84cc16"
       }
 
+      // Process cards - keep only raw JSON data
+      const enrichedCards = generatedData.cards?.map((card: any) => {
+        // Ensure each card has at least front and translation
+        if (!card.front || !card.translation) {
+          console.error('Invalid card structure:', card)
+          return null
+        }
+
+        return {
+          front: card.front,
+          back: card.translation, // Use simple translation as back
+          examples: card.examples,
+          translation: card.translation,
+          pronunciation: card.pronunciation,
+          wordType: card.wordType,
+          grammarNotes: card.grammarNotes,
+          usageNotes: card.usageNotes,
+          difficulty: card.difficulty,
+          mnemonicHint: card.mnemonicHint,
+          culturalContext: card.culturalContext,
+          relatedWords: card.relatedWords,
+          synonyms: card.synonyms,
+          antonyms: card.antonyms,
+          conjugations: card.conjugations,
+          tags: card.tags
+        }
+      }).filter(Boolean) || [] // Remove any null cards
+
+      // Validate required fields
+      if (!generatedData.title || !generatedData.cards || !Array.isArray(generatedData.cards)) {
+        console.error('Invalid deck structure:', generatedData)
+        throw new Error('Invalid deck structure from AI')
+      }
+
       return {
-        title: generatedData.title,
-        description: generatedData.description,
-        cards: generatedData.cards,
-        tags: generatedData.tags,
+        title: generatedData.title || `${userTopic} - ${targetLanguage}`,
+        description: generatedData.description || `Learn ${userTopic} in ${targetLanguage}`,
+        cards: enrichedCards,
+        tags: generatedData.tags || [targetLanguage.toLowerCase(), proficiencyLevel.toLowerCase()],
         color: colorMap[generatedData.suggestedColor] || DECK_COLORS[0],
         targetLanguage,
         proficiencyLevel,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        ...(generatedData.metadata && { metadata: generatedData.metadata }),
+        ...(generatedData.studyTips && { studyTips: generatedData.studyTips }),
+        ...(generatedData.additionalResources && { additionalResources: generatedData.additionalResources })
       }
 
     } catch (error) {
@@ -199,7 +293,7 @@ Example: {"topics": ["Family & Relationships", "Food & Dining", "Travel & Transp
 
   // Generate additional cards for an existing deck with smart duplicate detection
   static async generateDeckCards(request: any): Promise<LanguageCard[]> {
-    const { 
+    const {
       topic,
       deckTitle,
       deckDescription,
@@ -212,7 +306,7 @@ Example: {"topics": ["Family & Relationships", "Food & Dining", "Travel & Transp
     } = request
 
     // Analyze existing cards for patterns and themes
-    const existingTopics = existingCards.map((card: any, i: number) => 
+    const existingTopics = existingCards.map((card: any, i: number) =>
       `${i+1}. "${card.front}" → "${card.back.substring(0, 100)}${card.back.length > 100 ? '...' : ''}"`
     ).join('\n')
 
@@ -227,7 +321,7 @@ Example: {"topics": ["Family & Relationships", "Food & Dining", "Travel & Transp
 
     const optimalCardCount = getOptimalCardCount(existingCardCount)
 
-    const systemPrompt = `You are an expert educational content creator with advanced duplicate detection capabilities. You're adding cards to the existing "${deckTitle}" deck using the same format structure as existing cards.
+    const systemPrompt = `You are an expert educational content creator with advanced duplicate detection capabilities. You're adding cards to the existing "${deckTitle}" deck.
 
 CURRENT DECK ANALYSIS:
 - Deck Title: "${deckTitle}"
@@ -247,30 +341,37 @@ SMART GENERATION REQUIREMENTS:
 4. CONSISTENT DIFFICULTY: Match the complexity level of existing cards
 5. THEMATIC COHERENCE: Ensure cards fit the deck's learning objectives
 6. PROGRESSIVE LEARNING: Build upon concepts already covered
-7. FORMAT CONSISTENCY: Use the same HTML structure as the deck creation wizard
-
-CARD FORMAT REQUIREMENTS:
-- Front: Simple, clear target language content
-- Back: Rich HTML structure with multiple learning sections
-- Use proper HTML structure with CSS classes: card-back, main-answer, pronunciation, word-type, examples, grammar, culture, usage
-- Include sections that enhance learning: pronunciation guides, example sentences, grammar notes, cultural context
 
 ${customInstructions ? `CUSTOM INSTRUCTIONS: "${customInstructions}"` : ''}
 
-Return JSON with exactly ${optimalCardCount} cards:
+Return ONLY valid JSON.`
+
+    const userPrompt = `Create ${optimalCardCount} flashcards for "${topic}" that perfectly complement the existing "${deckTitle}" deck.
+
+CRITICAL: Review all ${existingCardCount} existing cards to ensure zero duplication. Focus on memory challenges and difficult concepts that enhance learning.
+
+Return ONLY valid JSON. Structure:
 {
   "cards": [
     {
-      "front": "Target language content (word/phrase/sentence)",
-      "back": "HTML-formatted structured answer matching deck creation format"
+      "front": "word/phrase/question",
+      "translation": "${nativeLanguage} translation",
+      "pronunciation": "phonetic guide",
+      "wordType": "noun/verb/adjective/etc",
+      "examples": [
+        {"text": "example sentence", "translation": "${nativeLanguage} translation"},
+        {"text": "another example", "translation": "${nativeLanguage} translation"}
+      ],
+      "grammarNotes": "grammar explanation if relevant",
+      "usageNotes": "when/how to use",
+      "mnemonicHint": "memory tip",
+      "culturalContext": "cultural notes if relevant",
+      "relatedWords": ["word1", "word2"],
+      "synonyms": ["synonym1"],
+      "antonyms": ["antonym1"]
     }
-  ],
-  "rationale": "Brief explanation of how these cards complement existing content"
-}`
-
-    const userPrompt = `Create ${optimalCardCount} ANKI-STYLE flashcards for "${topic}" that perfectly complement the existing "${deckTitle}" deck.
-
-CRITICAL: Review all ${existingCardCount} existing cards to ensure zero duplication. Focus on memory challenges and difficult concepts that enhance learning.
+  ]
+}
 
 ANKI PRINCIPLES FOR THESE CARDS:
 - ONE concept per card (atomic learning)
@@ -278,22 +379,6 @@ ANKI PRINCIPLES FOR THESE CARDS:
 - Simple, testable questions
 - Minimal but sufficient answers
 - Target genuine memory challenges
-
-RICH HTML FORMAT (match existing deck style):
-<div class="card-back">
-  <div class="translation"><strong>Translation:</strong> [Primary answer/translation]</div>
-  <div class="pronunciation"><strong>Pronunciation:</strong> [Phonetic pronunciation when helpful]</div>
-  <div class="word-type"><strong>Type:</strong> [Part of speech: noun, verb, adjective, etc.]</div>
-  <div class="examples"><strong>Examples:</strong>
-    <ul>
-      <li>[Example sentence in context → Translation]</li>
-      <li>[Additional example if needed → Translation]</li>
-    </ul>
-  </div>
-  <div class="grammar"><strong>Grammar:</strong> [Grammar notes for difficult patterns]</div>
-  <div class="culture"><strong>Culture:</strong> [Cultural context when relevant]</div>
-  <div class="usage"><strong>Usage:</strong> [Usage notes for tricky words]</div>
-</div>
 
 CARD TYPES TO PRIORITIZE:
 1. Tricky vocabulary (false friends, similar words)
@@ -304,12 +389,10 @@ CARD TYPES TO PRIORITIZE:
 6. Gender/article assignments
 7. Preposition usage challenges
 
-EXAMPLE RICH FORMATS:
-Vocabulary: Front: "gato" → Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> cat</div><div class='pronunciation'><strong>Pronunciation:</strong> /ˈɡato/</div><div class='word-type'><strong>Type:</strong> noun (masculine)</div><div class='examples'><strong>Examples:</strong><ul><li>El gato está durmiendo → The cat is sleeping</li></ul></div></div>"
-
-Cloze: Front: "Je _____ français" → Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> parle</div><div class='grammar'><strong>Grammar:</strong> 1st person singular of 'parler'</div><div class='examples'><strong>Examples:</strong><ul><li>Je parle français → I speak French</li></ul></div></div>"
-
-Idiomatic: Front: "take with a grain of salt" → Back: "<div class='card-back'><div class='translation'><strong>Translation:</strong> tomar algo con cautela</div><div class='pronunciation'><strong>Pronunciation:</strong> /tə teɪk ˈsʌmθɪŋ wɪð ə ɡreɪn əv sɔlt/</div><div class='word-type'><strong>Type:</strong> idiomatic expression</div><div class='examples'><strong>Examples:</strong><ul><li>You should take his advice with a grain of salt → Deberías tomar su consejo con cautela</li></ul></div><div class='usage'><strong>Usage:</strong> Use when suggesting skepticism about something</div></div>"
+Requirements:
+- Create exactly ${optimalCardCount} cards
+- Keep responses concise
+- Examples must be practical
 
 ${customInstructions ? `Additional focus: ${customInstructions}` : 'Focus on memory challenges and difficult-to-remember concepts.'}
 
@@ -328,12 +411,35 @@ Generate exactly ${optimalCardCount} atomic, memory-optimized flashcards that co
       })
 
       const response = completion.choices[0]?.message?.content
-      if (!response) {
-        throw new Error('No response from OpenAI')
-      }
+      if (!response) throw new Error('No response from OpenAI')
 
       const generatedData = JSON.parse(response)
-      return generatedData.cards || []
+
+      // Process cards - keep only raw JSON data
+      const processedCards = generatedData.cards?.map((card: any) => {
+        if (!card.front || !card.translation) return null
+
+        return {
+          front: card.front,
+          back: card.translation, // Use simple translation as back
+          examples: card.examples,
+          translation: card.translation,
+          pronunciation: card.pronunciation,
+          wordType: card.wordType,
+          grammarNotes: card.grammarNotes,
+          usageNotes: card.usageNotes,
+          difficulty: card.difficulty,
+          mnemonicHint: card.mnemonicHint,
+          culturalContext: card.culturalContext,
+          relatedWords: card.relatedWords,
+          synonyms: card.synonyms,
+          antonyms: card.antonyms,
+          conjugations: card.conjugations,
+          tags: card.tags
+        }
+      }).filter(Boolean) || []
+
+      return processedCards
 
     } catch (error) {
       console.error('AI card generation failed:', error)
@@ -341,8 +447,4 @@ Generate exactly ${optimalCardCount} atomic, memory-optimized flashcards that co
     }
   }
 
-  // Keep the old method for backwards compatibility but rename the class
-  static async generateTopicSuggestions(query: string): Promise<string[]> {
-    return await this.generateLanguageTopics(query, 'B1')
-  }
 }

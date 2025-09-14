@@ -4,12 +4,25 @@ import {useState, useEffect, useRef} from "react"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent} from "@/components/ui/card"
 import { Sparkles, X } from "lucide-react"
+import { CardFormatter } from "@/components/cards/card-formatter"
 
 interface StudyCardProps {
     card: {
         id: string
         front: string
         back: string
+        translation?: string
+        pronunciation?: string
+        wordType?: string
+        examples?: Array<{text: string, translation?: string} | string>
+        grammarNotes?: string
+        usageNotes?: string
+        mnemonicHint?: string
+        culturalContext?: string
+        relatedWords?: string[]
+        synonyms?: string[]
+        antonyms?: string[]
+        conjugations?: Record<string, string>
     }
     deck?: {
         title: string
@@ -49,18 +62,22 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                 switch (event.code) {
                     case "Digit1":
                         event.preventDefault()
+                        setShowButtons(true)
                         handleRate(0)
                         break
                     case "Digit2":
                         event.preventDefault()
+                        setShowButtons(true)
                         handleRate(1)
                         break
                     case "Digit3":
                         event.preventDefault()
+                        setShowButtons(true)
                         handleRate(2)
                         break
                     case "Digit4":
                         event.preventDefault()
+                        setShowButtons(true)
                         handleRate(3)
                         break
                 }
@@ -78,18 +95,7 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
         setShowButtons(false)
     }, [card.id])
 
-    // Auto-hide buttons after 3 seconds on mobile/touch devices
-    useEffect(() => {
-        if (isFlipped && !showButtons) {
-            const timer = setTimeout(() => {
-                // Only auto-show on touch devices (mobile)
-                if ('ontouchstart' in window) {
-                    setShowButtons(false)
-                }
-            }, 3000)
-            return () => clearTimeout(timer)
-        }
-    }, [isFlipped, showButtons])
+
 
     const handleFlip = () => {
         setIsAnimating(true)
@@ -99,8 +105,14 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
         }, 150)
     }
 
-    const handleFlippedCardClick = () => {
-        setShowButtons(!showButtons) // Toggle buttons on flipped card click
+    const handleCardClick = () => {
+        if (!isFlipped) {
+            // Single tap on front card - flip it
+            handleFlip()
+        } else {
+            // Single tap on back card - toggle buttons
+            setShowButtons(!showButtons)
+        }
     }
 
     const handleRate = (difficulty: number) => {
@@ -149,12 +161,6 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
         }
     }
 
-    const difficultyButtons = [
-        {label: "Again", value: 0, color: "bg-red-500", swipe: "← Swipe Left", emoji: "😓"},
-        {label: "Hard", value: 1, color: "bg-orange-500", swipe: "↓ Swipe Down", emoji: "🤔"},
-        {label: "Good", value: 2, color: "bg-blue-500", swipe: "↑ Swipe Up", emoji: "👍"},
-        {label: "Easy", value: 3, color: "bg-green-500", swipe: "→ Swipe Right", emoji: "😄"},
-    ]
 
     // Calculate progress
     const progress = currentCard && totalCards ? (currentCard / totalCards) * 100 : 0
@@ -165,7 +171,7 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
             className={`fixed inset-0 border-0 shadow-2xl bg-white dark:bg-gray-800 overflow-hidden transition-all duration-300 ${
                 isAnimating ? "scale-95 opacity-80" : "scale-100 opacity-100"
             } ${!isFlipped ? 'cursor-pointer' : 'cursor-pointer'}`}
-            onClick={!isFlipped ? handleFlip : handleFlippedCardClick}
+            onClick={handleCardClick}
         >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5"/>
 
@@ -216,13 +222,13 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                     </div>
                 )}
 
-                <CardContent className="p-4 sm:p-6 md:p-8 lg:p-10 h-dvh sm:h-screen flex flex-col justify-between relative z-10 overflow-hidden"
-                             style={{paddingTop: (currentCard && totalCards) ? '3rem' : '1.5rem'}}>
+                <CardContent className="p-3 sm:p-4 md:p-6 lg:p-8 h-dvh sm:h-screen flex flex-col justify-between relative z-10 overflow-y-auto"
+                             style={{paddingTop: (currentCard && totalCards) ? '4rem' : '2rem', paddingBottom: isFlipped ? '6rem' : '1rem'}}>
 
                     {/* Main Content Area */}
-                    <div className="flex-1 flex items-center justify-center overflow-hidden">
+                    <div className="flex-1 flex items-center justify-center min-h-0 py-4">
                         {!isFlipped ? (
-                            <div className="text-center space-y-6 md:space-y-8">
+                            <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 w-full max-w-4xl mx-auto px-4">
                                 <div
                                     className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto">
                                     <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white" fill="none"
@@ -235,13 +241,13 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                                         />
                                     </svg>
                                 </div>
-                                <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 dark:text-white leading-relaxed text-balance">
+                                <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-gray-900 dark:text-white leading-relaxed text-balance break-words hyphens-auto">
                                     {card.front}
-                                </p>
+                                </div>
                             </div>
                         ) : (
-                            <div className="w-full space-y-6 md:space-y-8 max-w-none md:max-w-4xl">
-                                <div className="flex items-center justify-between">
+                            <div className="w-full space-y-4 sm:space-y-6 md:space-y-8 max-w-none md:max-w-5xl mx-auto px-2 sm:px-4 overflow-y-auto">
+                                <div className="text-center">
                                     <div
                                         className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center mx-auto">
                                         <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white" fill="none"
@@ -254,136 +260,73 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                                             />
                                         </svg>
                                     </div>
-                                    
-                                    {/* AI Explanation Button - Desktop/Laptop only */}
-                                    <div className="hidden md:block">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleExplanation()
-                                            }}
-                                            disabled={isLoadingExplanation}
-                                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-medium rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50"
-                                        >
-                                            <Sparkles className="w-4 h-4" />
-                                            {isLoadingExplanation ? "Loading..." : "AI Explanation"}
-                                        </button>
-                                    </div>
                                 </div>
-                                <div
-                                    className="text-left text-sm sm:text-base md:text-lg lg:text-xl"
-                                    dangerouslySetInnerHTML={{__html: card.back}}
-                                />
+                                <div className="text-left overflow-y-auto max-h-[60vh] sm:max-h-[70vh]">
+                                    <CardFormatter 
+                                        card={card}
+                                        className="text-sm sm:text-base md:text-lg text-gray-800 dark:text-gray-200 leading-relaxed"
+                                    />
+                                </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Rating buttons when flipped - always visible with blur effect */}
-                    {isFlipped && (
-                        <div 
-                            className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-20 group"
-                            onMouseEnter={() => setShowButtons(true)}
-                            onMouseLeave={() => setShowButtons(false)}
-                        >
-                            <div className={`bg-transparent backdrop-blur-none rounded-2xl p-3 transition-all duration-300 ${
-                                showButtons ? 'opacity-100 blur-0' : 'opacity-40 blur-sm hover:opacity-70'
-                            }`}>
-                                {/* Mobile AI Explanation Button */}
-                                <div className="mb-3 flex justify-center md:hidden">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleExplanation()
-                                        }}
-                                        disabled={isLoadingExplanation}
-                                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-medium rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50"
-                                    >
-                                        <Sparkles className="w-4 h-4" />
-                                        {isLoadingExplanation ? "Loading..." : "AI Explanation"}
-                                    </button>
-                                </div>
-
-                                {/* Rating Buttons */}
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleRate(0)
-                                        }}
-                                        className="flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-900/20 active:scale-95"
-                                    >
-                                        <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-lg mb-1">
-                                            😓
-                                        </div>
-                                        <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                                            Again
-                                            <span className="hidden md:block text-[10px] opacity-70">Press 1</span>
-                                        </span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleRate(1)
-                                        }}
-                                        className="flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 hover:bg-orange-50 dark:hover:bg-orange-900/20 active:scale-95"
-                                    >
-                                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-lg mb-1">
-                                            🤔
-                                        </div>
-                                        <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
-                                            Hard
-                                            <span className="hidden md:block text-[10px] opacity-70">Press 2</span>
-                                        </span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleRate(2)
-                                        }}
-                                        className="flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-95"
-                                    >
-                                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg mb-1">
-                                            👍
-                                        </div>
-                                        <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                                            Good
-                                            <span className="hidden md:block text-[10px] opacity-70">Press 3</span>
-                                        </span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleRate(3)
-                                        }}
-                                        className="flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 hover:bg-green-50 dark:hover:bg-green-900/20 active:scale-95"
-                                    >
-                                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-lg mb-1">
-                                            😄
-                                        </div>
-                                        <span className="text-xs font-medium text-green-600 dark:text-green-400">
-                                            Easy
-                                            <span className="hidden md:block text-[10px] opacity-70">Press 4</span>
-                                        </span>
-                                    </button>
-                                </div>
+                    {/* Minimalist Button System */}
+                    {isFlipped && showButtons && (
+                        <div className="fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-white/95 to-white/80 dark:from-gray-900/95 dark:to-gray-900/80 backdrop-blur-md">
+                            <div className="flex items-center justify-center gap-3 p-6 pb-8 animate-in slide-in-from-bottom-8 duration-300">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleRate(0)
+                                    }}
+                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                                >
+                                    <svg className="w-4 h-4 text-red-500 group-hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Again</span>
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleRate(1)
+                                    }}
+                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                                >
+                                    <svg className="w-4 h-4 text-orange-500 group-hover:text-orange-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.294-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                    </svg>
+                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Hard</span>
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleRate(2)
+                                    }}
+                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                                >
+                                    <svg className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                                    </svg>
+                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Good</span>
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleRate(3)
+                                    }}
+                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                                >
+                                    <svg className="w-4 h-4 text-green-500 group-hover:text-green-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Easy</span>
+                                </button>
                             </div>
                         </div>
                     )}
 
-                    {!isFlipped && (
-                        <div className="pb-4">
-                            <Button
-                                onClick={handleFlip}
-                                disabled={isAnimating}
-                                className="w-full h-12 sm:h-14 md:h-16 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base sm:text-lg md:text-xl font-medium rounded-xl transition-all duration-200 shadow-lg active:scale-95 disabled:opacity-50"
-                            >
-                                {isAnimating ? "Loading..." : "Show Answer"}
-                                <span className="hidden md:inline-block ml-2 text-sm opacity-75">
-                                    (Press Space or Enter)
-                                </span>
-                            </Button>
-                        </div>
-                    )}
                 </CardContent>
 
                 {/* AI Explanation Overlay */}

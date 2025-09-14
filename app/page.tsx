@@ -63,11 +63,11 @@ export default function HomePage() {
 
           <div className="flex justify-center items-center mb-16">
             <Link href="/auth/login">
-              <Button size="lg" className="px-12 py-5 text-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-bold rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-110 transform border-0 relative overflow-hidden group">
+              <Button size="lg" className="px-8 sm:px-12 py-4 sm:py-5 text-lg sm:text-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-bold rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-110 transform border-0 relative overflow-hidden group max-w-xs sm:max-w-none">
                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <Sparkles className="w-6 h-6 mr-3 animate-pulse" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 animate-pulse" />
                 Start Learning Free
-                <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
             </Link>
           </div>
@@ -252,7 +252,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <Link href="/auth/sign-up">
-                <Button size="lg" className="w-full sm:w-auto px-10 py-5 text-lg bg-white text-gray-900 hover:bg-gray-50 font-bold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
+                <Button size="lg" className="w-auto sm:w-auto px-8 sm:px-10 py-4 sm:py-5 text-lg bg-white text-gray-900 hover:bg-gray-50 font-bold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 max-w-xs sm:max-w-none">
                   Get Started Free
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>

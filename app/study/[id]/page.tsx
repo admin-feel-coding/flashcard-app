@@ -74,13 +74,13 @@ export default async function StudyPage({ params }: StudyPageProps) {
           <div className="flex flex-col gap-3">
             <a
               href={`/study/${id}?mode=practice`}
-              className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-900 dark:text-white font-medium rounded-2xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
             >
               Practice All Cards
             </a>
             <a
               href={`/deck/${id}`}
-              className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-colors bg-transparent"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-2xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
             >
               Back to Deck
             </a>

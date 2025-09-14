@@ -70,11 +70,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save deck' }, { status: 500 })
     }
 
-    // Save cards to database
+    // Save cards to database with rich data
     const cardsToInsert = generatedDeck.cards.map(card => ({
       deck_id: deck.id,
       front: card.front,
       back: card.back,
+      rich_data: {
+        translation: card.translation,
+        pronunciation: card.pronunciation,
+        wordType: card.wordType,
+        examples: card.examples,
+        grammarNotes: card.grammarNotes,
+        usageNotes: card.usageNotes,
+        difficulty: card.difficulty,
+        mnemonicHint: card.mnemonicHint,
+        culturalContext: card.culturalContext,
+        relatedWords: card.relatedWords,
+        synonyms: card.synonyms,
+        antonyms: card.antonyms,
+        conjugations: card.conjugations
+      },
+      tags: card.tags || []
     }))
 
     const { error: cardsError } = await supabase

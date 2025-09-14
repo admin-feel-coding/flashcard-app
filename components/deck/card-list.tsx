@@ -3,12 +3,25 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { EditCardDialog } from "./edit-card-dialog"
 import { DeleteCardDialog } from "./delete-card-dialog"
+import { CardFormatter } from "@/components/cards/card-formatter"
 
 interface FlashCard {
   id: string
   front: string
   back: string
   created_at: string
+  translation?: string
+  pronunciation?: string
+  wordType?: string
+  examples?: Array<{text: string, translation?: string} | string>
+  grammarNotes?: string
+  usageNotes?: string
+  mnemonicHint?: string
+  culturalContext?: string
+  relatedWords?: string[]
+  synonyms?: string[]
+  antonyms?: string[]
+  conjugations?: Record<string, string>
 }
 
 interface CardListProps {
@@ -51,9 +64,9 @@ export function CardList({ cards, deckId }: CardListProps) {
               </div>
               <div>
                 <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Back</h4>
-                <div 
+                <CardFormatter 
+                  card={card}
                   className="text-gray-900 dark:text-white text-sm"
-                  dangerouslySetInnerHTML={{ __html: card.back }} 
                 />
               </div>
             </div>

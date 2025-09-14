@@ -58,11 +58,27 @@ export async function POST(request: NextRequest) {
     // Generate cards using AI
     const generatedCards = await AILanguageLearningService.generateDeckCards(aiRequest)
 
-    // Save new cards to database
+    // Save new cards to database with rich data
     const cardsToInsert = generatedCards.map(card => ({
       deck_id: body.deckId,
       front: card.front,
       back: card.back,
+      rich_data: {
+        translation: card.translation,
+        pronunciation: card.pronunciation,
+        wordType: card.wordType,
+        examples: card.examples,
+        grammarNotes: card.grammarNotes,
+        usageNotes: card.usageNotes,
+        difficulty: card.difficulty,
+        mnemonicHint: card.mnemonicHint,
+        culturalContext: card.culturalContext,
+        relatedWords: card.relatedWords,
+        synonyms: card.synonyms,
+        antonyms: card.antonyms,
+        conjugations: card.conjugations
+      },
+      tags: card.tags || []
     }))
 
     const { error: cardsError } = await supabase

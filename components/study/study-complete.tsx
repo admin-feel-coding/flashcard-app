@@ -99,18 +99,17 @@ export function StudyComplete({ deck, stats, onReturnToDeck, onStudyAgain }: Stu
           </CardContent>
         </Card>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
             onClick={onStudyAgain}
-            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-900 dark:text-white font-medium rounded-2xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Study Again
           </Button>
           <Button
             onClick={onReturnToDeck}
-            variant="outline"
-            className="px-8 py-3 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors bg-transparent"
+            className="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-2xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Deck
