@@ -37,7 +37,6 @@ interface StudyCardProps {
 export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}: StudyCardProps) {
     const [isFlipped, setIsFlipped] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
-    const [showButtons, setShowButtons] = useState(false)
     const [showExplanation, setShowExplanation] = useState(false)
     const [explanation, setExplanation] = useState("")
     const [isLoadingExplanation, setIsLoadingExplanation] = useState(false)
@@ -62,22 +61,18 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                 switch (event.code) {
                     case "Digit1":
                         event.preventDefault()
-                        setShowButtons(true)
                         handleRate(0)
                         break
                     case "Digit2":
                         event.preventDefault()
-                        setShowButtons(true)
                         handleRate(1)
                         break
                     case "Digit3":
                         event.preventDefault()
-                        setShowButtons(true)
                         handleRate(2)
                         break
                     case "Digit4":
                         event.preventDefault()
-                        setShowButtons(true)
                         handleRate(3)
                         break
                 }
@@ -92,7 +87,6 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
     useEffect(() => {
         setIsFlipped(false)
         setIsAnimating(false)
-        setShowButtons(false)
     }, [card.id])
 
 
@@ -107,11 +101,7 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
 
     const handleCardClick = () => {
         if (!isFlipped) {
-            // Single tap on front card - flip it
             handleFlip()
-        } else {
-            // Single tap on back card - toggle buttons
-            setShowButtons(!showButtons)
         }
     }
 
@@ -249,16 +239,10 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                             <div className="w-full space-y-4 sm:space-y-6 md:space-y-8 max-w-none md:max-w-5xl mx-auto px-2 sm:px-4 overflow-y-auto">
                                 <div className="text-center">
                                     <div
-                                        className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                                        <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white" fill="none"
-                                             stroke="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
+                                        className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto">
+                                        <div className="text-white text-lg sm:text-xl md:text-2xl font-bold">
+                                            {card.front.charAt(0).toUpperCase()}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="text-left overflow-y-auto max-h-[60vh] sm:max-h-[70vh]">
@@ -272,9 +256,9 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                     </div>
 
                     {/* Minimalist Button System */}
-                    {isFlipped && showButtons && (
-                        <div className="fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-white/95 to-white/80 dark:from-gray-900/95 dark:to-gray-900/80 backdrop-blur-md">
-                            <div className="flex items-center justify-center gap-3 p-6 pb-8 animate-in slide-in-from-bottom-8 duration-300">
+                    {isFlipped && (
+                        <div className="fixed inset-x-0 bottom-0 z-20">
+                            <div className="flex items-center justify-center gap-3 p-6 pb-8">
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation()

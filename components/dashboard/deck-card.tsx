@@ -28,13 +28,13 @@ interface DeckCardProps {
   onSelectionChange?: (deckId: string, selected: boolean) => void
 }
 
-export function DeckCard({ 
-  deck, 
-  onEdit, 
-  onDelete, 
-  isSelectionMode = false, 
-  isSelected = false, 
-  onSelectionChange 
+export function DeckCard({
+  deck,
+  onEdit,
+  onDelete,
+  isSelectionMode = false,
+  isSelected = false,
+  onSelectionChange
 }: DeckCardProps) {
   const cardCount = deck.cards?.[0]?.count || 0
 
@@ -49,7 +49,7 @@ export function DeckCard({
   }
 
   return (
-    <Card 
+    <Card
       className={`group bg-white dark:bg-gray-800 border shadow-sm hover:shadow-md transition-all duration-200 rounded-xl overflow-hidden flex flex-col cursor-pointer ${
         isSelectionMode
           ? isSelected
@@ -71,29 +71,29 @@ export function DeckCard({
               onClick={(e) => e.stopPropagation()}
             />
           )}
-          <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+          <h3 className="font-semibold text-gray-900 dark:text-white truncate text-base leading-tight">
             {deck.title}
           </h3>
         </div>
 
         {/* Description */}
         {deck.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed overflow-hidden">
             {deck.description}
           </p>
         )}
 
         {/* Tags */}
         {deck.tags && deck.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {deck.tags.slice(0, 3).map((tag, index) => (
-              <Badge key={index} variant="outline" className="text-xs px-2 py-0.5">
+          <div className="flex flex-wrap gap-2 mb-4 overflow-hidden">
+            {deck.tags.slice(0, 2).map((tag, index) => (
+              <Badge key={index} variant="outline" className="text-xs px-2 py-0.5 truncate max-w-20">
                 {tag}
               </Badge>
             ))}
-            {deck.tags.length > 3 && (
+            {deck.tags.length > 2 && (
               <Badge variant="outline" className="text-xs px-2 py-0.5 text-gray-500">
-                +{deck.tags.length - 3}
+                +{deck.tags.length - 2}
               </Badge>
             )}
           </div>
@@ -144,7 +144,7 @@ export function DeckCard({
           )}
         </CardContent>
       )}
-      
+
       {isSelectionMode && (
         <CardContent className="p-4 sm:p-5 md:p-6 pt-0">
           <div className="text-center py-2">
