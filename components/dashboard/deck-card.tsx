@@ -1,11 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { BookOpen, Play } from "lucide-react"
 
 interface Deck {
@@ -49,111 +45,99 @@ export function DeckCard({
   }
 
   return (
-    <Card
-      className={`group bg-white dark:bg-gray-800 border shadow-sm hover:shadow-md transition-all duration-200 rounded-xl overflow-hidden flex flex-col cursor-pointer ${
+    <div
+      className={`relative bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 transition-all duration-200 ${
         isSelectionMode
           ? isSelected
-            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.02]'
-            : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:scale-[1.01]'
-          : 'border-gray-200 dark:border-gray-700 hover:scale-[1.01]'
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+            : 'hover:border-blue-300 dark:hover:border-blue-600'
+          : 'hover:shadow-md active:scale-[0.99]'
       }`}
-      style={{ minHeight: '280px' }}
       onClick={handleCardClick}
     >
-      <CardHeader className="p-4 flex-1">
-        {/* Title Row */}
-        <div className="flex items-center gap-2 mb-4">
-          {isSelectionMode && (
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={handleSelectionChange}
-              className="w-4 h-4 shrink-0"
-              onClick={(e) => e.stopPropagation()}
-            />
+      {/* Header */}
+      <div className="flex items-start gap-3 mb-4">
+        {isSelectionMode && (
+          <Checkbox
+            checked={isSelected}
+            onCheckedChange={handleSelectionChange}
+            className="mt-1 shrink-0"
+            onClick={(e) => e.stopPropagation()}
+          />
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: deck.color }}>
+              {deck.title.charAt(0).toUpperCase()}
+            </div>
+            <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight truncate">
+              {deck.title}
+            </h3>
+          </div>
+          {deck.description && (
+            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2">
+              {deck.description}
+            </p>
           )}
-          <h3 className="font-semibold text-gray-900 dark:text-white truncate text-base leading-tight">
-            {deck.title}
-          </h3>
         </div>
+      </div>
 
-        {/* Description */}
-        {deck.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed overflow-hidden">
-            {deck.description}
-          </p>
-        )}
-
-        {/* Tags */}
-        {deck.tags && deck.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4 overflow-hidden">
-            {deck.tags.slice(0, 2).map((tag, index) => (
-              <Badge key={index} variant="outline" className="text-xs px-2 py-0.5 truncate max-w-20">
-                {tag}
-              </Badge>
-            ))}
-            {deck.tags.length > 2 && (
-              <Badge variant="outline" className="text-xs px-2 py-0.5 text-gray-500">
-                +{deck.tags.length - 2}
-              </Badge>
-            )}
-          </div>
-        )}
-
-        {/* Spacer to push footer to bottom */}
-        <div className="flex-1"></div>
-
-        {/* Footer: Date and Info */}
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-auto">
-          <span>Created {new Date(deck.created_at).toLocaleDateString()}</span>
-          <div className="flex items-center gap-1 shrink-0">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: deck.color }} />
-            <span>{cardCount} cards</span>
-          </div>
+      {/* Tags */}
+      {deck.tags && deck.tags.length > 0 && (
+        <div className="flex gap-1 mb-4 overflow-hidden">
+          {deck.tags.slice(0, 2).map((tag, index) => (
+            <span key={index} className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md truncate max-w-16">
+              {tag}
+            </span>
+          ))}
+          {deck.tags.length > 2 && (
+            <span className="text-xs text-gray-500 px-1">+{deck.tags.length - 2}</span>
+          )}
         </div>
-      </CardHeader>
+      )}
+
+      {/* Stats */}
+      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-4">
+        <span>{cardCount} cards</span>
+        <span>{new Date(deck.created_at).toLocaleDateString()}</span>
+      </div>
+
+      {/* Actions */}
       {!isSelectionMode && (
-        <CardContent className="p-4 pt-0">
-          <div className="flex gap-2">
-            {cardCount > 0 ? (
-              <>
-                <Link href={`/study/${deck.id}`} className="flex-1">
-                  <Button className="w-full h-10 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white">
-                    <Play className="w-4 h-4 mr-2" />
-                    Study Now
-                  </Button>
-                </Link>
-                <Link href={`/deck/${deck.id}`}>
-                  <Button variant="outline" className="h-10 w-10">
-                    <BookOpen className="w-4 h-4" />
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <Link href={`/deck/${deck.id}`} className="flex-1">
-                <Button className="w-full h-10 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Add Cards
-                </Button>
+        <div className="space-y-2">
+          {cardCount > 0 ? (
+            <div className="flex gap-2">
+              <Link href={`/study/${deck.id}`} className="flex-1">
+                <button className="w-full h-9 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
+                  <Play className="w-4 h-4" />
+                  Study
+                </button>
               </Link>
-            )}
-          </div>
-          {cardCount === 0 && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
-              Create your first flashcards to start learning
-            </p>
+              <Link href={`/deck/${deck.id}`}>
+                <button className="h-9 w-9 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 rounded-xl transition-all duration-200 active:scale-95 flex items-center justify-center">
+                  <BookOpen className="w-4 h-4" />
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <Link href={`/deck/${deck.id}`} className="block">
+              <button className="w-full h-9 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-900 dark:text-white text-sm font-medium rounded-xl transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
+                <BookOpen className="w-4 h-4" />
+                Add Cards
+              </button>
+            </Link>
           )}
-        </CardContent>
+        </div>
       )}
 
+      {/* Selection Mode */}
       {isSelectionMode && (
-        <CardContent className="p-4 sm:p-5 md:p-6 pt-0">
-          <div className="text-center py-2">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isSelected ? 'Selected for deletion' : 'Click to select'}
-            </p>
-          </div>
-        </CardContent>
+        <div className="text-center py-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {isSelected ? 'Selected' : 'Tap to select'}
+          </p>
+        </div>
       )}
-    </Card>
+    </div>
   )
 }

@@ -163,7 +163,6 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
             } ${!isFlipped ? 'cursor-pointer' : 'cursor-pointer'}`}
             onClick={handleCardClick}
         >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5"/>
 
                 {/* Minimal Progress Header */}
                 {(currentCard && totalCards) && (
@@ -212,8 +211,9 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                     </div>
                 )}
 
-                <CardContent className="p-3 sm:p-4 md:p-6 lg:p-8 h-dvh sm:h-screen flex flex-col justify-between relative z-10 overflow-y-auto"
-                             style={{paddingTop: (currentCard && totalCards) ? '4rem' : '2rem', paddingBottom: isFlipped ? '6rem' : '1rem'}}>
+                <CardContent className="p-3 sm:p-4 md:p-6 lg:p-8 h-dvh sm:h-screen flex flex-col relative z-10 "
+                             style={{paddingTop: (currentCard && totalCards) ? '4rem' : '2rem'}}
+                >
 
                     {/* Main Content Area */}
                     <div className="flex-1 flex items-center justify-center min-h-0 py-4">
@@ -238,27 +238,22 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                         ) : (
                             <div className="w-full space-y-4 sm:space-y-6 md:space-y-8 max-w-none md:max-w-5xl mx-auto px-2 sm:px-4 overflow-y-auto">
                                 <div className="text-center">
-                                    <div
-                                        className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto">
-                                        <div className="text-white text-lg sm:text-xl md:text-2xl font-bold">
-                                            {card.front.charAt(0).toUpperCase()}
+                                        <div
+                                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-black-900 dark:text-white leading-relaxed text-balance break-words hyphens-auto">
+                                            {card.front}
                                         </div>
-                                    </div>
                                 </div>
-                                <div className="text-left overflow-y-auto max-h-[60vh] sm:max-h-[70vh]">
-                                    <CardFormatter 
+                                    <CardFormatter
                                         card={card}
                                         className="text-sm sm:text-base md:text-lg text-gray-800 dark:text-gray-200 leading-relaxed"
                                     />
-                                </div>
                             </div>
                         )}
                     </div>
 
                     {/* Minimalist Button System */}
                     {isFlipped && (
-                        <div className="fixed inset-x-0 bottom-0 z-20">
-                            <div className="flex items-center justify-center gap-3 p-6 pb-8">
+                            <div className="flex items-center justify-center gap-3 p-4 pb-6">
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation()
@@ -308,7 +303,6 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                                     <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Easy</span>
                                 </button>
                             </div>
-                        </div>
                     )}
 
                 </CardContent>
@@ -333,7 +327,7 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
 
                             {/* Content */}
                             <div className="p-6 overflow-y-auto max-h-[60vh]">
-                                <div 
+                                <div
                                     className="text-gray-700 dark:text-gray-300 leading-relaxed space-y-4"
                                     dangerouslySetInnerHTML={{
                                         __html: explanation

@@ -38,15 +38,6 @@ interface CardFormatterProps {
 }
 
 export function CardFormatter({ card, className = "" }: CardFormatterProps) {
-  // If the card.back contains HTML (old format), render it as HTML
-  if (card.back && (card.back.includes('<div') || card.back.includes('<strong>'))) {
-    return (
-      <div 
-        className={className}
-        dangerouslySetInnerHTML={{ __html: card.back }}
-      />
-    )
-  }
 
   // Get data from rich_data if available, otherwise fall back to direct properties
   const data = card.rich_data || card
@@ -82,8 +73,8 @@ export function CardFormatter({ card, className = "" }: CardFormatterProps) {
           <ul>
             {data.examples.map((example, index) => (
               <li key={index}>
-                {typeof example === 'string' 
-                  ? example 
+                {typeof example === 'string'
+                  ? example
                   : `${example.text}${example.translation ? ` → ${example.translation}` : ''}`
                 }
               </li>
