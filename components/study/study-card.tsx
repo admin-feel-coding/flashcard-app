@@ -211,8 +211,8 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                     </div>
                 )}
 
-                <CardContent className="p-3 sm:p-4 md:p-6 lg:p-8 h-dvh sm:h-screen flex flex-col relative z-10 "
-                             style={{paddingTop: (currentCard && totalCards) ? '4rem' : '2rem'}}
+                <CardContent className="p-3 sm:p-4 md:p-6 lg:p-8 h-dvh sm:h-screen flex flex-col relative z-10"
+                             style={{paddingTop: (currentCard && totalCards) ? '4rem' : '2rem', paddingBottom: isFlipped ? '7rem' : '1rem'}}
                 >
 
                     {/* Main Content Area */}
@@ -236,76 +236,80 @@ export function StudyCard({card, deck, currentCard, totalCards, onRate, onExit}:
                                 </div>
                             </div>
                         ) : (
-                            <div className="w-full space-y-4 sm:space-y-6 md:space-y-8 max-w-none md:max-w-5xl mx-auto px-2 sm:px-4 overflow-y-auto">
-                                <div className="text-center">
-                                        <div
-                                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-black-900 dark:text-white leading-relaxed text-balance break-words hyphens-auto">
-                                            {card.front}
-                                        </div>
+                            <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 h-full flex flex-col">
+                                <div className="text-center mb-6">
+                                    <div className="text-base sm:text-lg md:text-xl font-medium text-gray-700 dark:text-gray-300 mb-4">
+                                        {card.front}
+                                    </div>
+                                    <div className="w-8 h-px bg-gray-300 dark:bg-gray-600 mx-auto"></div>
                                 </div>
+                                <div className="flex-1 overflow-y-auto">
                                     <CardFormatter
                                         card={card}
                                         className="text-sm sm:text-base md:text-lg text-gray-800 dark:text-gray-200 leading-relaxed"
                                     />
+                                </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Minimalist Button System */}
-                    {isFlipped && (
-                            <div className="flex items-center justify-center gap-3 p-4 pb-6">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleRate(0)
-                                    }}
-                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
-                                >
-                                    <svg className="w-4 h-4 text-red-500 group-hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Again</span>
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleRate(1)
-                                    }}
-                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
-                                >
-                                    <svg className="w-4 h-4 text-orange-500 group-hover:text-orange-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.294-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                    </svg>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Hard</span>
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleRate(2)
-                                    }}
-                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
-                                >
-                                    <svg className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                    </svg>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Good</span>
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleRate(3)
-                                    }}
-                                    className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
-                                >
-                                    <svg className="w-4 h-4 text-green-500 group-hover:text-green-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Easy</span>
-                                </button>
-                            </div>
-                    )}
-
                 </CardContent>
+
+                {/* Fixed Button System */}
+                {isFlipped && (
+                    <div className="fixed inset-x-0 bottom-0 z-30 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-center gap-3 p-4 pb-6">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleRate(0)
+                                }}
+                                className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                            >
+                                <svg className="w-4 h-4 text-red-500 group-hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Again</span>
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleRate(1)
+                                }}
+                                className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                            >
+                                <svg className="w-4 h-4 text-orange-500 group-hover:text-orange-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.294-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                </svg>
+                                <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Hard</span>
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleRate(2)
+                                }}
+                                className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                            >
+                                <svg className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.60L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                                </svg>
+                                <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Good</span>
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleRate(3)
+                                }}
+                                className="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                            >
+                                <svg className="w-4 h-4 text-green-500 group-hover:text-green-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">Easy</span>
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {/* AI Explanation Overlay */}
                 {showExplanation && explanation && (
